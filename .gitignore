@@ -11,3 +11,21 @@ pnpm-debug.log*
 
 auto-imports.d.ts
 components.d.ts
+
+# 本地临时文件（不提交）
+.codebuddy/
+.kilo/
+.kilocode/
+.playwright-cli/
+logs/
+dist/
+temp_*
+*.py
+CODEBUDDY.md
+*.png
+backup_*
+卡介绍.md
+.cursor/rules/*.md
+=
+src - 副本/
+深渊印记：魅魔潜伏录/
