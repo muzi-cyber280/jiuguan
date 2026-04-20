@@ -1,0 +1,415 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "世界定位": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "当前城邦": {
+          "default": "圣玛丽亚",
+          "type": "string"
+        },
+        "当前位置": {
+          "default": "修道院",
+          "type": "string"
+        },
+        "当前场景": {
+          "default": "走廊",
+          "type": "string"
+        },
+        "当前事件": {
+          "default": "春之丰收祭",
+          "type": "string"
+        }
+      }
+    },
+    "世界时间": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "年": {
+          "default": 1,
+          "type": "number"
+        },
+        "月": {
+          "default": 4,
+          "type": "number"
+        },
+        "日": {
+          "default": 1,
+          "type": "number"
+        },
+        "时": {
+          "default": 6,
+          "type": "number"
+        },
+        "分": {
+          "type": "number"
+        }
+      }
+    },
+    "角色成长": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "等级": {
+          "default": 1,
+          "type": "number"
+        },
+        "当前经验": {
+          "type": "number"
+        },
+        "经验上限": {
+          "default": 100,
+          "type": "number"
+        },
+        "属性点": {
+          "type": "number"
+        }
+      }
+    },
+    "DND属性": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "力量": {
+          "default": 10,
+          "type": "number"
+        },
+        "敏捷": {
+          "default": 10,
+          "type": "number"
+        },
+        "体质": {
+          "default": 10,
+          "type": "number"
+        },
+        "智力": {
+          "default": 10,
+          "type": "number"
+        },
+        "感知": {
+          "default": 10,
+          "type": "number"
+        },
+        "魅力": {
+          "default": 10,
+          "type": "number"
+        }
+      }
+    },
+    "资源面板": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "欲望点数_DP": {
+          "type": "number"
+        },
+        "技能点_SP": {
+          "type": "number"
+        },
+        "蓝条": {
+          "default": 100,
+          "type": "number"
+        }
+      }
+    },
+    "身体状态": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "饥饿度": {
+          "type": "number"
+        }
+      }
+    },
+    "技能树": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "可解锁技能": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "技能名"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "描述": {
+                "type": "string"
+              },
+              "消耗_SP": {
+                "default": 1,
+                "type": "number"
+              },
+              "等级": {
+                "default": "D",
+                "type": "string"
+              },
+              "蓝条消耗": {
+                "default": 10,
+                "type": "number"
+              }
+            }
+          }
+        },
+        "已解锁技能": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "技能名"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "等级": {
+                "default": "D",
+                "type": "string"
+              },
+              "描述": {
+                "type": "string"
+              },
+              "蓝条消耗": {
+                "default": 10,
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "道具商店": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "商品目录": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "商品名"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "价格_DP": {
+                "type": "number"
+              },
+              "作用": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "物品栏": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "物品名"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "数量": {
+                "default": 1,
+                "type": "number"
+              },
+              "作用": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "任务列表": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "description": "任务名"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "任务等级": {
+            "default": "D",
+            "type": "string",
+            "enum": [
+              "D",
+              "C",
+              "B",
+              "A",
+              "S"
+            ]
+          },
+          "任务描述": {
+            "type": "string"
+          },
+          "任务状态": {
+            "default": "待接取",
+            "type": "string",
+            "enum": [
+              "待接取",
+              "进行中",
+              "已完成",
+              "已失败",
+              "已忽略"
+            ]
+          },
+          "奖励_DP": {
+            "type": "number"
+          },
+          "奖励_SP": {
+            "type": "number"
+          },
+          "奖励_EXP": {
+            "type": "number"
+          },
+          "失败后果": {
+            "default": "无严重后果",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "回收站": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "已删除物品": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        "已删除技能": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        "已删除NPC": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        "已删除商品": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        "已删除可解锁技能": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        "已删除任务": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        }
+      }
+    },
+    "NPC状态": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "description": "NPC名称"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "在场": {
+            "default": true,
+            "type": "boolean"
+          },
+          "备注": {
+            "type": "string"
+          },
+          "怀疑度": {
+            "type": "number"
+          },
+          "成瘾度": {
+            "type": "number"
+          },
+          "当前态度": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "事件日历": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "创作事件": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "事件名称"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "触发日期": {
+                "type": "string"
+              },
+              "事件类型": {
+                "default": "周期",
+                "type": "string",
+                "enum": [
+                  "周期",
+                  "年度",
+                  "一次性"
+                ]
+              },
+              "风险等级": {
+                "default": "中",
+                "type": "string",
+                "enum": [
+                  "低",
+                  "中",
+                  "高",
+                  "极高"
+                ]
+              },
+              "发生地点": {
+                "type": "string"
+              },
+              "事件内容": {
+                "type": "string"
+              },
+              "影响与应对": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
