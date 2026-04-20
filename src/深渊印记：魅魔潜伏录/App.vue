@@ -760,7 +760,7 @@ const inactiveTasks = computed(() => Object.entries(_.pickBy(taskList.value, (t:
 function setTaskStatus(name: string, status: string) {
   const task = taskList.value[name];
   if (!task) return;
-  
+
   // 直接操作对象，避免_.set把任务名中的.解析为路径分隔符
   task.任务状态 = status;
 }
@@ -926,10 +926,10 @@ function fillInput(action: string, name: string) {
 function unlockSkill(name: string, skill: any) {
   if (sp.value < skill.消耗_SP) return;
   _.set(data.value, '资源面板.技能点_SP', sp.value - skill.消耗_SP);
-  
+
   // 优先使用技能对象中的等级和蓝条消耗，缺失时根据前缀推断
   const { grade, mpCost } = getSkillGradeAndCost(name, skill);
-  
+
   _.set(data.value, `技能树.已解锁技能.${name}`, {
     等级: grade,
     描述: skill.描述,
@@ -1291,12 +1291,9 @@ function debugAddSkills() {
 }
 
 .tab-badge.reward-badge {
-  top: -4px;
-  right: 14px;
+  right: 13px;
   background: #ffc107;
   color: #333;
-  border: 2px solid #ff9800;
-  box-shadow: 0 0 6px rgba(255, 193, 7, 0.6);
 }
 
 .tab-pane {
@@ -1836,13 +1833,13 @@ function debugAddSkills() {
   padding: 2px 6px;
   border-radius: 3px;
   margin-left: 8px;
-  
+
   &.present {
     background: rgba(76, 175, 80, 0.3);
     color: #a5d6a7;
     border: 1px solid #4caf50;
   }
-  
+
   &.absent {
     background: rgba(120, 144, 156, 0.3);
     color: #b0bec5;
@@ -1854,20 +1851,20 @@ function debugAddSkills() {
   font-size: 0.65em;
   padding: 2px 8px;
   margin-left: 8px;
-  
+
   &.leave-btn {
     background: linear-gradient(135deg, #ef5350, #c62828);
     border-color: #ef5350;
-    
+
     &:hover {
       box-shadow: 0 0 8px rgba(239, 83, 80, 0.5);
     }
   }
-  
+
   &.arrive-btn {
     background: linear-gradient(135deg, #4caf50, #2e7d32);
     border-color: #4caf50;
-    
+
     &:hover {
       box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
     }
