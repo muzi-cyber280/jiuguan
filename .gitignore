@@ -11,6 +11,7 @@ pnpm-debug.log*
 
 auto-imports.d.ts
 components.d.ts
+<<<<<<< HEAD
 
 # 本地临时文件（不提交）
 .codebuddy/
@@ -29,3 +30,5 @@ backup_*
 =
 src - 副本/
 深渊印记：魅魔潜伏录/
+=======
+>>>>>>> dc79e70c2b507a4984bc1620b1a875e1a4ff083d
