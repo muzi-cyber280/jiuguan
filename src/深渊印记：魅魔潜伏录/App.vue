@@ -876,10 +876,12 @@ function buyItem(name: string, item: any) {
   if (dp.value < item.价格_DP) return;
   _.set(data.value, '资源面板.欲望点数_DP', dp.value - item.价格_DP);
   const existing = _.get(data.value, `道具商店.物品栏.${name}`);
+  // 优先使用商品已有的类型字段，仅在缺失时用关键词推断
+  const itemType = item.类型 ?? (/(卷轴|药剂|熏香|魔药|微粒|药水|核心|镇定剂|注射)/.test(item.描述 || '') ? '消耗品' : '耐用品');
   if (existing) {
     _.set(data.value, `道具商店.物品栏.${name}.数量`, (existing.数量 || 0) + 1);
   } else {
-    _.set(data.value, `道具商店.物品栏.${name}`, { 数量: 1, 作用: item.描述 });
+    _.set(data.value, `道具商店.物品栏.${name}`, { 数量: 1, 作用: item.描述, 类型: itemType });
   }
   const catalog = _.get(data.value, '道具商店.商品目录', {});
   delete catalog[name];

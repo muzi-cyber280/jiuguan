@@ -8,7 +8,13 @@
       "properties": {
         "当前城邦": {
           "default": "圣玛丽亚",
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "圣玛丽亚",
+            "艾瑟嘉德",
+            "自由贸易港",
+            "黑锋堡"
+          ]
         },
         "当前位置": {
           "default": "修道院",
@@ -19,7 +25,7 @@
           "type": "string"
         },
         "当前事件": {
-          "default": "春之丰收祭",
+          "default": "无",
           "type": "string"
         }
       }
@@ -33,7 +39,7 @@
           "type": "number"
         },
         "月": {
-          "default": 4,
+          "default": 1,
           "type": "number"
         },
         "日": {
@@ -58,10 +64,6 @@
           "type": "number"
         },
         "当前经验": {
-          "type": "number"
-        },
-        "经验上限": {
-          "default": 100,
           "type": "number"
         },
         "属性点": {
@@ -112,6 +114,10 @@
         "蓝条": {
           "default": 100,
           "type": "number"
+        },
+        "蓝条上限": {
+          "default": 100,
+          "type": "number"
         }
       }
     },
@@ -132,22 +138,28 @@
           "default": {},
           "type": "object",
           "propertyNames": {
-            "type": "string",
-            "description": "技能名"
+            "type": "string"
           },
           "additionalProperties": {
+            "default": {},
             "type": "object",
             "properties": {
               "描述": {
                 "type": "string"
               },
               "消耗_SP": {
-                "default": 1,
                 "type": "number"
               },
               "等级": {
                 "default": "D",
-                "type": "string"
+                "type": "string",
+                "enum": [
+                  "D",
+                  "C",
+                  "B",
+                  "A",
+                  "S"
+                ]
               },
               "蓝条消耗": {
                 "default": 10,
@@ -160,15 +172,22 @@
           "default": {},
           "type": "object",
           "propertyNames": {
-            "type": "string",
-            "description": "技能名"
+            "type": "string"
           },
           "additionalProperties": {
+            "default": {},
             "type": "object",
             "properties": {
               "等级": {
                 "default": "D",
-                "type": "string"
+                "type": "string",
+                "enum": [
+                  "D",
+                  "C",
+                  "B",
+                  "A",
+                  "S"
+                ]
               },
               "描述": {
                 "type": "string"
@@ -190,17 +209,17 @@
           "default": {},
           "type": "object",
           "propertyNames": {
-            "type": "string",
-            "description": "商品名"
+            "type": "string"
           },
           "additionalProperties": {
+            "default": {},
             "type": "object",
             "properties": {
+              "描述": {
+                "type": "string"
+              },
               "价格_DP": {
                 "type": "number"
-              },
-              "作用": {
-                "type": "string"
               }
             }
           }
@@ -209,10 +228,10 @@
           "default": {},
           "type": "object",
           "propertyNames": {
-            "type": "string",
-            "description": "物品名"
+            "type": "string"
           },
           "additionalProperties": {
+            "default": {},
             "type": "object",
             "properties": {
               "数量": {
@@ -221,6 +240,14 @@
               },
               "作用": {
                 "type": "string"
+              },
+              "类型": {
+                "default": "消耗品",
+                "type": "string",
+                "enum": [
+                  "消耗品",
+                  "耐用品"
+                ]
               }
             }
           }
