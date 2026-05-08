@@ -51,7 +51,6 @@
           "type": "number"
         },
         "分": {
-          "default": 0,
           "type": "number"
         }
       }
@@ -65,11 +64,9 @@
           "type": "number"
         },
         "当前经验": {
-          "default": 0,
           "type": "number"
         },
         "属性点": {
-          "default": 0,
           "type": "number"
         }
       }
@@ -109,11 +106,9 @@
       "type": "object",
       "properties": {
         "欲望点数_DP": {
-          "default": 0,
           "type": "number"
         },
         "技能点_SP": {
-          "default": 0,
           "type": "number"
         },
         "蓝条": {
@@ -131,7 +126,6 @@
       "type": "object",
       "properties": {
         "饥饿度": {
-          "default": 0,
           "type": "number"
         }
       }
@@ -151,11 +145,9 @@
             "type": "object",
             "properties": {
               "描述": {
-                "default": "",
                 "type": "string"
               },
               "消耗_SP": {
-                "default": 0,
                 "type": "number"
               },
               "等级": {
@@ -198,7 +190,6 @@
                 ]
               },
               "描述": {
-                "default": "",
                 "type": "string"
               },
               "蓝条消耗": {
@@ -225,11 +216,9 @@
             "type": "object",
             "properties": {
               "描述": {
-                "default": "",
                 "type": "string"
               },
               "价格_DP": {
-                "default": 0,
                 "type": "number"
               }
             }
@@ -250,7 +239,6 @@
                 "type": "number"
               },
               "作用": {
-                "default": "",
                 "type": "string"
               },
               "类型": {
@@ -288,7 +276,6 @@
             ]
           },
           "任务描述": {
-            "default": "",
             "type": "string"
           },
           "任务状态": {
@@ -303,15 +290,12 @@
             ]
           },
           "奖励_DP": {
-            "default": 0,
             "type": "number"
           },
           "奖励_SP": {
-            "default": 0,
             "type": "number"
           },
           "奖励_EXP": {
-            "default": 0,
             "type": "number"
           },
           "失败后果": {
@@ -390,19 +374,15 @@
             "type": "boolean"
           },
           "备注": {
-            "default": "",
             "type": "string"
           },
           "怀疑度": {
-            "default": 0,
             "type": "number"
           },
           "成瘾度": {
-            "default": 0,
             "type": "number"
           },
           "当前态度": {
-            "default": "",
             "type": "string"
           }
         }
@@ -423,7 +403,6 @@
             "type": "object",
             "properties": {
               "触发日期": {
-                "default": "",
                 "type": "string"
               },
               "事件类型": {
@@ -446,15 +425,12 @@
                 ]
               },
               "发生地点": {
-                "default": "",
                 "type": "string"
               },
               "事件内容": {
-                "default": "",
                 "type": "string"
               },
               "影响与应对": {
-                "default": "",
                 "type": "string"
               }
             }
