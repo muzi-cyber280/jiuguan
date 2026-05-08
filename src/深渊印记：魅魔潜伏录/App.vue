@@ -1207,9 +1207,10 @@ function debugAddSkills() {
 
 .collapse-bar {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   user-select: none;
+  gap: 8px;
 }
 
 .collapse-title {
@@ -1224,7 +1225,7 @@ function debugAddSkills() {
   color: #888;
   font-size: 0.6em;
   font-weight: normal;
-  margin-left: 2px;
+  margin-left: auto;
   opacity: 0.6;
   flex-shrink: 0;
 }
