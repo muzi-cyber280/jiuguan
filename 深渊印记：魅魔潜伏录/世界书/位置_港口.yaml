@@ -1,0 +1,23 @@
+<position id="port" name="港口" 所属城邦="自由贸易港">
+【环境概览】
+繁忙商港，船只往来不断。海风阳光，夜间灯火通明。
+
+【可选场景】
+<scenes>
+  <scene id="docks" name="码头">装卸货物，可搭船前往其他城市</scene>
+  <scene id="warehouses" name="仓库区">货物存储，走私交易</scene>
+  <scene id="customs" name="海关">检查站，需绕开</scene>
+</scenes>
+
+【人群构成】
+海员(数百人)、商贩、码头工人
+
+【精气价值】
+低纯度但数量多，海员酒后失防
+
+【可能遇到的NPC】
+鸦眼、海勒姆、小洛
+
+【风险】
+低，无官方管辖
+</position>

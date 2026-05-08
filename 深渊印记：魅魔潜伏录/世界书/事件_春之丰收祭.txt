@@ -1,0 +1,117 @@
+【日期信息】
+<date_info>
+  触发周期: 每年4月1日-7日
+  检测条件: 世界时间.月 === 4 && 世界时间.日 >= 1 && 世界时间.日 <= 7
+  示例日期: 第1年4月1日-7日、第2年4月1日-7日...
+  当前状态: ⚠️ 开局默认事件
+</date_info>
+
+<event id="harvest_festival" name="春之丰收祭">
+【事件概述】
+<overview>
+  周期: 每年一次(春分日)
+  时长: 全日(卯时至亥时)
+  地点: 修道院广场及周边
+  性质: 年度感恩庆典 + 社交盛会
+</overview>
+
+【庆典布局】
+<layout>
+  <zone id="main" name="中央广场">
+    特征: 长桌环绕，满桌的食物
+    活动: 公共宴饮、歌舞表演
+    人群: 最密集，混入其中最安全
+  </zone>
+  <zone id="temple" name="圣坛区域">
+    特征: 巨型圣像，祭司主持
+    活动: 感恩弥撒、祈福仪式
+    风险: 圣光浓度高，需谨慎接近
+  </zone>
+  <zone id="market" name="临时集市">
+    特征: 摊位林立，村民售卖土产
+    活动: 买卖、讨价还价
+    机遇: 可购买物资、打探消息
+  </zone>
+  <zone id="edge" name="边缘暗巷">
+    特征: 烛光不及，僻静无人
+    用途: 暂时卸下伪装、处理猎物
+    风险: 有巡逻卫兵，需警觉
+  </zone>
+</layout>
+
+【人群构成】
+<population>
+  <group type="修女" count="约50人">
+    状态: 忙碌招待，无暇顾及异常
+  </group>
+  <group type="村民" count="数百人">
+    特征: 穿着朴素，喝酒、划拳、说笑
+    价值: 低纯度精气，但数量庞大
+    态度: 对修道院敬畏，对修女恭敬
+  </group>
+  <group type="贵族" count="少数">
+    特征: 华服显眼，仆从跟随
+    价值: 中高纯度精气
+    态度: 傲慢，但可接近
+  </group>
+  <group type="神职人员" count="数人">
+    特征: 正式祭司、可能有主教
+    风险: 高阶神职=高检测风险
+    建议: 避开或极度谨慎接近
+  </group>
+</population>
+
+【核心活动】
+<activities>
+  <activity id="a1" time="卯时">
+    开场弥撒，圣坛祈福
+  </activity>
+  <activity id="a2" time="辰时-申时">
+    公共宴饮，歌舞表演
+    最佳混入时机
+  </activity>
+  <activity id="a3" time="酉时">
+    丰收感恩仪式，献祭土产
+  </activity>
+  <activity id="a4" time="戌时">
+    篝火晚会，村民散去
+    暗巷行动时机
+  </activity>
+</activities>
+
+【对魅魔的意义】
+<significance target="魅魔">
+  <value id="v1">
+    一年中人群最密集的日子
+    混入其中几乎不会被发现
+  </value>
+  <value id="v2">
+    食物饮料充足，可下药获取唾液
+    宴饮期间接触机会最多
+  </value>
+  <value id="v3">
+    宴饮期间人们注意力分散
+    可趁乱猎取低纯度精气(量取胜)
+  </value>
+  <value id="v4">
+    僻静暗巷可短暂显露真身
+    处理猎物或恢复伪装
+  </value>
+</significance>
+
+【生存策略】
+<strategies>
+  <strategy id="s1">以招待修女身份服务村民，自然接触</strategy>
+  <strategy id="s2">宴饮期间下药于饮料，批量获取唾液</strategy>
+  <strategy id="s3">避开圣坛和神职人员，远离高检测区</strategy>
+  <strategy id="s4">戌时利用篝火晚会掩护，在暗巷行动</strategy>
+  <strategy id="s5">提前准备抑制药剂，应对圣光区域</strategy>
+</strategies>
+
+【饥饿度联动】
+<hunger_link>
+  建议状态: 饥饿度<50时参与
+  若饥饿度>70: 宴饮中可能失控，需提前处理
+  最佳策略: 庆典前先降饥饿度，庆典中大量补充
+</hunger_link>
+</event>

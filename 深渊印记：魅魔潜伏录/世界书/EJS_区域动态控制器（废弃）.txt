@@ -1,0 +1,93 @@
+<%!
+// 区域动态控制器 - 根据世界定位变量自动加载对应区域设定和NPC条目
+// 变量路径: stat_data.世界定位.当前大域
+%><%{
+var domain = typeof stat_data?.世界定位?.当前大域 !== 'undefined' ? stat_data.世界定位.当前大域 : '修道院';
+var content = '';
+
+// ====== 主要NPC条目列表（每个NPC有5个条目）======
+var mainNpcEntries = {
+  '伊莲娜': ['伊莲娜_基础信息', '伊莲娜_性格调色盘', '伊莲娜_二次解释', '伊莲娜_衣柜', '伊莲娜_NSFW调色盘'],
+  '纪寒竹': ['纪寒竹_基础信息', '纪寒竹_性格调色盘', '纪寒竹_二次解释', '纪寒竹_衣柜', '纪寒竹_NSFW调色盘'],
+  '纪晚樱': ['纪晚樱_基础信息', '纪晚樱_性格调色盘', '纪晚樱_二次解释', '纪晚樱_衣柜', '纪晚樱_NSFW调色盘'],
+  '林雾': ['林雾_基础信息', '林雾_性格调色盘', '林雾_二次解释', '林雾_衣柜', '林雾_NSFW调色盘'],
+  '陆清寒': ['陆清寒_基础信息', '陆清寒_性格调色盘', '陆清寒_二次解释', '陆清寒_衣柜', '陆清寒_NSFW调色盘']
+};
+
+// ====== 次要NPC条目列表（每个只有1个条目）======
+var minorNpcs = [
+  'NPC_格雷戈里神父', 'NPC_艾琳修女', 'NPC_莉莉', 'NPC_莫拉大婶',  // 圣玛丽亚
+  'NPC_卡尔文侍卫', 'NPC_埃尔文', 'NPC_薇薇安', 'NPC_艾德蒙勋爵', 'NPC_银狐', 'NPC_温蒂',  // 艾瑟嘉德
+  'NPC_鸦眼', 'NPC_铁锤玛莎', 'NPC_露西奶奶', 'NPC_费利克斯', 'NPC_小洛', 'NPC_海勒姆',  // 自由贸易港
+  'NPC_雷恩团长', 'NPC_影鸦', 'NPC_黑杰克', 'NPC_阿廖沙',  // 黑锋堡
+  'NPC_流浪者辛格', 'NPC_老托马斯'  // 流动
+];
+
+// ====== 区域映射 ======
+var domainConfig = {
+  '圣玛丽亚': {
+    mainNpcs: ['伊莲娜', '纪晚樱'],
+    minorNpcs: ['NPC_格雷戈里神父', 'NPC_艾琳修女', 'NPC_莉莉', 'NPC_莫拉大婶']
+  },
+  '艾瑟嘉德': {
+    mainNpcs: [],
+    minorNpcs: ['NPC_卡尔文侍卫', 'NPC_埃尔文', 'NPC_薇薇安', 'NPC_艾德蒙勋爵', 'NPC_银狐', 'NPC_温蒂']
+  },
+  '自由贸易港': {
+    mainNpcs: ['陆清寒'],
+    minorNpcs: ['NPC_鸦眼', 'NPC_铁锤玛莎', 'NPC_露西奶奶', 'NPC_费利克斯', 'NPC_小洛', 'NPC_海勒姆']
+  },
+  '黑锋堡': {
+    mainNpcs: [],
+    minorNpcs: ['NPC_雷恩团长', 'NPC_影鸦', 'NPC_黑杰克', 'NPC_阿廖沙']
+  },
+  '修道院': {
+    mainNpcs: [],
+    minorNpcs: []
+  }
+};
+
+// ====== 流动NPC（所有区域都加载）======
+var floatingMainNpcs = ['纪寒竹', '林雾'];
+var floatingMinorNpcs = ['NPC_流浪者辛格', 'NPC_老托马斯'];
+
+// ====== 加载条目 ======
+async function loadEntries(entryNames) {
+  var result = '';
+  for (var i = 0; i < entryNames.length; i++) {
+    var entry = await getwi(entryNames[i]);
+    if (entry) {
+      result += entry + '
+';
+    }
+  }
+  return result;
+}
+
+// 加载当前区域的NPC
+var config = domainConfig[domain] || { mainNpcs: [], minorNpcs: [] };
+
+// 加载主要NPC条目
+var mainNpcEntryNames = [];
+for (var i = 0; i < config.mainNpcs.length; i++) {
+  var npcName = config.mainNpcs[i];
+  if (mainNpcEntries[npcName]) {
+    mainNpcEntryNames = mainNpcEntryNames.concat(mainNpcEntries[npcName]);
+  }
+}
+// 加载流动主要NPC
+for (var i = 0; i < floatingMainNpcs.length; i++) {
+  var npcName = floatingMainNpcs[i];
+  if (mainNpcEntries[npcName]) {
+    mainNpcEntryNames = mainNpcEntryNames.concat(mainNpcEntries[npcName]);
+  }
+}
+content += await loadEntries(mainNpcEntryNames);
+
+// 加载次要NPC条目
+content += await loadEntries(config.minorNpcs);
+// 加载流动次要NPC
+content += await loadEntries(floatingMinorNpcs);
+
+return content;
+}%>

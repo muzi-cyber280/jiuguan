@@ -1,0 +1,127 @@
+【日期信息】
+<date_info>
+  触发周期: 每年10月15日-21日
+  检测条件: 世界时间.月 === 10 && 世界时间.日 >= 15 && 世界时间.日 <= 21
+  示例日期: 第1年10月15日-21日、第2年10月15日-21日...
+  风险等级: 极高(强制暴走)
+</date_info>
+
+<event id="abyss_resonance" name="深渊裂隙共鸣">
+【事件概述】
+<overview>
+  周期: 每年一次(10月15日-21日)
+  时长: 约一个时辰
+  地点: 深渊印记持有者所在位置
+  性质: 深渊与现实边界薄弱时刻
+</overview>
+
+【共鸣现象】
+<phenomenon>
+  <manifestation id="m1" name="印记震动">
+    小腹处的深渊印记剧烈震颤
+    印记在皮肉下剧烈跳动，像冰冷的针刺
+    无法主动压制
+  </manifestation>
+  <manifestation id="m2" name="气息外泄">
+    深渊气息从小腹处的深渊印记外溢
+    周围人会不自觉地搓手臂、加快脚步
+    野兽和敏感者会躲避
+  </manifestation>
+  <manifestation id="m3" name="幻象浮现">
+    眼前可能闪过深渊景象
+    需集中意志抵抗
+    否则可能短暂失神
+  </manifestation>
+</phenomenon>
+
+【深渊生物活动】
+<abyss_activity>
+  <activity id="a1">
+    其他深渊生物可能穿越裂隙
+    类型: 低阶恶魔、深渊眷族
+    态度: 可能为敌/中立/潜在盟友
+  </activity>
+  <activity id="a2">
+    已潜伏的深渊生物可能被唤醒
+    可能遇到同类
+    但也可能是竞争对手
+  </activity>
+  <activity id="a3">
+    深渊气息汇聚点可能形成临时裂隙
+    可通往深渊(极度危险)
+    或从中获取深渊物资
+  </activity>
+</abyss_activity>
+
+【对魅魔的影响】
+<impact target="魅魔">
+  <effect id="e1" name="本能唤醒">
+    深渊本能被强烈激活
+    渴望返回深渊或接近裂隙
+    需理智抵抗
+  </effect>
+  <effect id="e2" name="饥饿度波动">
+    饥饿度暂时±20点
+    取决于共鸣方向
+    若吸收气息: -20; 若被抽离: +20
+  </effect>
+  <effect id="e3" name="能力增强">
+    深渊系技能效果×1.5
+    持续至共鸣结束
+  </effect>
+  <effect id="e4" name="暴露风险">
+    气息外泄可能导致周围人警觉
+    需远离人群
+  </effect>
+</impact>
+
+【机遇】
+<opportunities>
+  <opp id="o1" type="同类接触">
+    可能遇到其他深渊生物
+    可结盟/交换情报/获取帮助
+    风险: 也可能是敌人
+  </opp>
+  <opp id="o2" type="深渊物资">
+    临时裂隙可能掉落深渊物品
+    如: 深渊晶石、高阶材料
+    需冒险接近裂隙
+  </opp>
+  <opp id="o3" type="能力进化">
+    共鸣期间深度冥想
+    可能解锁新技能或强化现有技能
+    消耗: 大量DP
+  </opp>
+</opportunities>
+
+【风险】
+<risks>
+  <risk id="r1">
+    气息外泄暴露身份
+  </risk>
+  <risk id="r2">
+    深渊本能失控，做出异常行为
+  </risk>
+  <risk id="r3">
+    遇到敌对深渊生物
+  </risk>
+  <risk id="r4">
+    被吸入裂隙(若靠太近)
+  </risk>
+</risks>
+
+【生存策略】
+<strategies>
+  <strategy id="s1">共鸣开始时立即远离人群</strategy>
+  <strategy id="s2">集中意志抵抗幻象和本能</strategy>
+  <strategy id="s3">评估是否值得冒险接近裂隙</strategy>
+  <strategy id="s4">若遇到同类，谨慎判断敌友</strategy>
+  <strategy id="s5">共鸣结束后检查饥饿度变化</strategy>
+</strategies>
+
+【共鸣感知】
+<abyss_sense>
+  深渊印记剧烈震颤，震颤的方向感指向共鸣的源头，你能感知到它在哪个方向、大致多远
+  身体比意识先做出反应——肌肉绷紧、呼吸变浅、脚步不自觉地想往某个方向走，或者想往反方向退
+</abyss_sense>
+</event>

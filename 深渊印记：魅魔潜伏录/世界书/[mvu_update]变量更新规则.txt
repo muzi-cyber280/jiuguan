@@ -1,0 +1,397 @@
+---
+变量更新规则:
+  世界定位:
+    当前城邦:
+      type: string
+      check:
+        - 当前所在的主城（圣玛丽亚/艾瑟嘉德/自由贸易港/黑锋堡）
+        - 移动到新城邦时更新
+    当前位置:
+      type: string
+      check:
+        - 当前城邦内的具体位置（修道院/大教堂/审判庭等）
+        - 移动时更新
+    当前场景:
+      type: string
+      check:
+        - 当前场景描述（走廊/房间/广场等）
+        - 进入新场景时更新
+    当前事件:
+      type: string
+      check:
+        - 当前正在进行的事件名称（无表示无事件）
+        - 事件开始时设置，事件结束时改为"无"
+
+  世界时间:
+    年:
+      type: number
+      range: ">= 1"
+      check:
+        - 游戏内年份，开局为第1年
+        - 满12个月后年份+1
+    月:
+      type: number
+      range: "1~12"
+      check:
+        - 游戏内月份，1-12月
+        - 满30天后月份+1，超过12月则归1并年份+1
+    日:
+      type: number
+      range: "1~30"
+      check:
+        - 游戏内日期，1-30日
+        - 每月固定30天
+        - 满30天后归1，月份+1
+    时:
+      type: number
+      range: "0~23"
+      check:
+        - 24小时制，0-23点
+        - 剧情推进时根据时间流逝更新
+        - 满24小时归0，日+1
+
+    分:
+      type: number
+      range: "0~59"
+      check:
+        - 分钟，0-59分
+        - 满60分归0，时+1
+
+  角色成长:
+    等级:
+      type: number
+      range: ">= 1"
+      check:
+        - ⛔⛔⛔ ABSOLUTELY FORBIDDEN: AI cannot modify 等级 via JSONPatch
+        - 等级由UI在经验满时自动提升
+        - 任何包含 "角色成长/等级" 的JSONPatch都是违规的
+    当前经验:
+      type: number
+      range: ">= 0"
+      check:
+        - ⛔⛔⛔ ABSOLUTELY FORBIDDEN: AI cannot modify 当前经验 via JSONPatch
+        - 经验由UI在领取任务奖励时自动增加并处理升级
+        - 任何包含 "角色成长/当前经验" 的JSONPatch都是违规的
+    经验上限:
+      type: number
+      check:
+        - ⛔⛔⛔ ABSOLUTELY FORBIDDEN: AI cannot modify 经验上限
+        - 经验上限由公式自动计算: floor(100 * 1.2^(等级-1) + 50*(等级-1))
+        - 任何包含 "角色成长/经验上限" 的JSONPatch都是违规的
+    属性点:
+      type: number
+      range: ">= 0"
+      check:
+        - ⛔⛔⛔ ABSOLUTELY FORBIDDEN: AI cannot modify 属性点 via JSONPatch
+        - 属性点由UI在升级时自动发放（每级+1）
+        - 属性点只能通过<user>在UI中点击分配来消耗
+        - 任何包含 "角色成长/属性点" 的JSONPatch都是违规的
+
+  资源面板:
+    欲望点数_DP:
+      type: number
+      range: ">= 0"
+      check:
+        - ⛔⛔⛔ ABSOLUTELY FORBIDDEN: AI cannot modify DP via JSONPatch
+        - DP只能通过<user>在UI中操作（领取任务奖励、购买物品等）
+        - 任何包含 "资源面板/欲望点数_DP" 的JSONPatch都是违规的
+        - 即使剧情需要消耗DP，也必须让<user>通过UI操作
+    技能点_SP:
+      type: number
+      range: ">= 0"
+      check:
+        - ⛔⛔⛔ ABSOLUTELY FORBIDDEN: AI cannot modify SP via JSONPatch
+        - SP只能通过<user>在UI中操作
+        - 任何包含 "资源面板/技能点_SP" 的JSONPatch都是违规的
+    蓝条:
+      type: number
+      range: "0~蓝条上限"
+      check:
+        - ⛔ 禁止操作：AI不能扣除蓝条。蓝条扣除只能通过UI操作（施展技能时由UI自动扣除）
+        - ✅ 允许操作：AI可以恢复蓝条
+          - 自然恢复：每小时恢复 10 + (智力-10)×3 点
+          - 吸取体液恢复：根据体液类型和精气纯度计算恢复量
+          - JSONPatch示例：{ "op": "replace", "path": "/资源面板/蓝条", "value": 恢复后的值 }
+        - 任何对蓝条的 op:delta 操作都是违规的
+    蓝条上限:
+      type: number
+      check:
+        - ⛔⛔⛔ ABSOLUTELY FORBIDDEN: AI cannot modify 蓝条上限
+        - 蓝条上限由智力决定：100 + (智力-10)×10
+        - 示例：智力10→上限100，智力15→上限150，智力20→上限200
+
+  身体状态:
+    饥饿度:
+      type: number
+      range: 0~100
+      check:
+        - increase over time without feeding
+        - decrease when <user> extracts fluids
+
+  技能树:
+    可解锁技能:
+      type: |-
+        { [技能名称: string]: { 等级: 'D'|'C'|'B'|'A'|'S'; 描述: string; 消耗_SP: number; 蓝条消耗: number; } }
+      check:
+        - 技能名称格式: [等级]级_技能名 (如 "C级_暗影触手", "A级_深渊凝视")
+        - 技能等级决定强度和蓝条消耗:
+          - D级: 最弱，蓝条消耗 5~15
+          - C级: 普通，蓝条消耗 15~25
+          - B级: 中等，蓝条消耗 25~40
+          - A级: 强力，蓝条消耗 40~60
+          - S级: 最强，蓝条消耗 60~100
+        - Use op:insert to add new skills to catalog
+        - FORBIDDEN: DO NOT auto-unlock skills in 已解锁技能
+        
+        ⛔ 生成前检查（必须执行）:
+        - 在生成新技能前，必须先检查可解锁技能数量
+        - 如果可解锁技能数量 >= 3，禁止生成新技能
+        - 只有当可解锁技能数量 < 3 时，才允许生成新技能
+        - 这是为了避免技能列表过长，保持游戏体验
+        
+        生成时机（满足条件时执行）:
+        1. 优先时机（低风险场景，检查后生成）:
+           - 酒馆闲聊、集市闲逛、街头偶遇、NPC日常对话、夜间探索
+           - 检查：如果可解锁技能数量 < 3，生成1~2个新技能
+           - 如果可解锁技能数量 >= 3，跳过生成
+        2. 里程碑时机（不受数量限制）:
+           - {{user}}等级提升后，额外生成1~2个新技能
+           - 完成A级/S级任务后，额外生成2~3个新技能
+           - 进入新区域或解锁新剧情线后，生成1~2个与当前环境相关的技能
+        3. 技能等级分布建议:
+           - 前期(等级1-5): 以D~C级技能为主
+           - 中期(等级6-10): 以C~B级技能为主，可穿插A级
+           - 后期(等级11+): 以B~S级技能为主
+        Example: { "op": "insert", "path": "/技能树/可解锁技能/C级_魅惑之眼", "value": { "等级": "C", "消耗_SP": 1, "描述": "使目标陷入短暂的迷恋状态", "蓝条消耗": 20 } }
+        
+    已解锁技能:
+      type: |-
+        { [技能名称: string]: { 等级: 'D'|'C'|'B'|'A'|'S'; 描述: string; 蓝条消耗: number; } }
+      check:
+        - ⛔ FORBIDDEN: NEVER add skills here directly
+        - <user> must unlock skills via UI, not through AI output
+        - ⛔ FORBIDDEN: AI禁止通过JSONPatch扣除蓝条
+        - 当<user>说"施展XXX"时，AI只需在故事中描述技能效果，绝不能修改变量
+
+  道具商店:
+    商品目录:
+      type: |-
+        { [商品名称: string]: { 描述: string; 价格_DP: number; } }
+      check:
+        - Use op:insert to add items to catalog
+        - FORBIDDEN: DO NOT decrease DP for purchases
+        
+        ⛔ 生成前检查（必须执行）:
+        - 在生成新商品前，必须先检查商品目录数量
+        - 如果商品目录数量 >= 5，禁止生成新商品
+        - 只有当商品目录数量 < 5 时，才允许生成新商品
+        - 这是为了避免商店列表过长，保持游戏体验
+        
+        生成时机（满足条件时执行）:
+        1. 优先时机（低风险场景，检查后生成）:
+           - 酒馆闲聊时听到小道消息 → 黑市新货到
+           - 集市闲逛时发现摊位 → 旅行商人有新奇物品
+           - NPC委托/赠礼 → 获得特殊道具或炼金配方
+           - 夜间探索/废墟拾荒 → 发现深渊遗物或稀有耗材
+           - 检查：如果商品目录数量 < 5，生成2~3个新商品
+           - 如果商品目录数量 >= 5，跳过生成
+        2. 里程碑时机（不受数量限制）:
+           - {{user}}等级提升后，额外生成2~3个新商品
+           - 完成A级/S级任务后，额外生成3~5个新商品
+           - 进入新城邦或解锁新势力关系后，生成2~3个当地特色商品
+        3. 商品价格分布建议:
+           - 消耗品（药剂、熏香、卷轴、魔药微粒等）: 20~150 DP
+             · 低阶: 20~30 DP（净化熏香、基础药剂等）
+             · 中阶: 50~80 DP（强效抑制药剂、遗忘卷轴等）
+             · 高阶: 100~150 DP（一次性强力道具）
+           - 耐用品（护符、配饰、工具、钥匙、书信、情报物品等）: 60~500 DP
+             · 低阶: 60~80 DP（淬火磨刀石、线索地图等）
+             · 中阶: 100~150 DP（拟态圣光护符、暗影斗篷等）
+             · 高阶: 300~500 DP（结界水晶、真身投影等）
+           - 生成商品时必须在描述中明确是消耗品还是耐用品
+        Example: { "op": "insert", "path": "/道具商店/商品目录/强效抑制药剂", "value": { "描述": "消耗品。大幅压制魅魔本能，持续6小时", "价格_DP": 50 } }
+        
+    物品栏:
+      类型说明: |-
+        物品分为【消耗品】和【耐用品】两种：
+        - 消耗品：用一次就没了，如药剂、熏香、卷轴、魔药微粒等
+        - 耐用品：可以反复使用不会消耗，如地图、钥匙、配饰、工具、书信、手套等
+      物品字段说明: |-
+        - 数量: 消耗品用数量跟踪（用完-1），耐用品数量固定为1，永远不减
+        - 作用: 描述物品功能
+        - 类型: "消耗品" 或 "耐用品"
+      type: |-
+        { [道具名称: string]: { 数量: number; 作用: string; 类型: '消耗品'|'耐用品'; } }
+      check:
+        === 获得道具时（必须执行） ===
+        当剧情中出现以下情况时，AI必须用 op:insert 添加道具到物品栏：
+        - 开场时：玩家自带的基础装备和物品
+        - NPC赠送：NPC明确将物品交给玩家
+        - 捡到物品：玩家发现并拾取物品
+        - 任务奖励：完成任务后获得的非DP/SP/EXP奖励
+        - 购买获得：玩家在商店消耗金币购买（非DP商店）
+        
+        添加时必须判断道具类型：
+        - 消耗品（药剂、熏香、卷轴、魔药等）：数量填实际数量
+          { "op": "insert", "path": "/道具商店/物品栏/抑制药剂", "value": { "数量": 3, "作用": "压制魅魔本能，持续2小时", "类型": "消耗品" } }
+        - 耐用品（地图、钥匙、配饰、工具、书信等）：数量固定为1，永远不减
+          { "op": "insert", "path": "/道具商店/物品栏/城邦地图", "value": { "数量": 1, "作用": "标注四城邦位置与主干道", "类型": "耐用品" } }
+        
+        === 使用道具时（消耗品才执行） ===
+        当玩家使用【消耗品】时，用 op:delta 减少数量：
+        { "op": "delta", "path": "/道具商店/物品栏/抑制药剂/数量", "value": -1 }
+        数量降为0时UI自动删除，AI无需额外操作
+        
+        === 耐用品规则 ===
+        - 耐用品的数量始终为1，永远不使用 op:delta 减少
+        - 耐用品不会被"用完"，AI不得删除或减少耐用品
+        - 如果剧情中耐用品被损坏/丢失，用 op:replace 将数量改为0，UI会自动标记为"已损坏/已丢失"
+        
+        === 禁止操作 ===
+        - ⛔ 禁止 op:remove 删除物品
+        - ⛔ 禁止对耐用品使用 op:delta
+        - ⛔ 禁止模拟DP商店购买（由UI处理）
+
+  任务列表:
+    type: |-
+      {
+        [任务名称: string]: {
+          任务等级: 'D' | 'C' | 'B' | 'A' | 'S';
+          任务描述: string;
+          任务状态: '待接取' | '进行中' | '已完成' | '已失败' | '已忽略';
+          奖励_DP: number;
+          奖励_SP: number;
+          奖励_EXP: number;
+          失败后果: string;
+        }
+      }
+    check:
+      - 任务名称格式规则:
+        - ✅ 推荐: "调查修道院密室"、"丰收祭存活"、"寻找失落的符文"、"MQ1_生存抉择"
+        - ⛔ 禁止在任务名称中使用点号(.)，因为JSONPath会将点号解析为嵌套层级
+          - ❌ 错误: "MQ.Ⅰ_生存抉择" → 会被解析为 /任务列表/MQ/Ⅰ_生存抉择
+          - ✅ 正确: "MQ1_生存抉择" 或 "主线任务_生存抉择"
+        - 任务标题应简洁明了，直接反映任务内容
+        - UI会显示完整标题
+      - IMPORTANT: Always use EXACT field names: 任务等级, 任务描述, 任务状态, 奖励_DP, 奖励_SP, 奖励_EXP, 失败后果
+      - NEVER use short names like 状态, 描述, 奖励
+      - MANDATORY: 奖励_EXP must ALWAYS be > 0 for EVERY task
+      - MANDATORY: Every task MUST have all fields
+      - 失败后果是剧情性描述，例如: "被发现身份，遭到追捕"、"失去NPC信任"、"无严重后果"
+      - Recommended reward ranges by task level:
+        - D级: 奖励_DP 10~20, 奖励_SP 0, 奖励_EXP 50~100
+        - C级: 奖励_DP 20~40, 奖励_SP 0~1, 奖励_EXP 100~200
+        - B级: 奖励_DP 40~80, 奖励_SP 1~2, 奖励_EXP 200~400
+        - A级: 奖励_DP 80~150, 奖励_SP 2~3, 奖励_EXP 400~800
+        - S级: 奖励_DP 150~300, 奖励_SP 3~5, 奖励_EXP 800~1500
+      - ⛔⛔⛔ ABSOLUTELY FORBIDDEN: NEVER modify DP/SP/EXP/等级/属性点 when completing/failing tasks
+      - ⛔⛔⛔ AI只能修改任务状态，绝不能发放奖励或扣除惩罚
+      - To complete a task: ONLY set 任务状态 to '已完成'
+      - To fail a task: ONLY set 任务状态 to '已失败'
+      
+      生成时机:
+        ⛔ 生成前检查（必须执行）:
+        - 在生成新任务前，必须先检查待接取任务和进行中任务的总数量
+        - 如果（待接取任务数量 + 进行中任务数量）>= 3，禁止生成新任务
+        - 只有当总数量 < 3 时，才允许生成新任务
+        - 这是为了避免任务列表过长，保持游戏体验
+        
+        1. 饥饿度联动（优先级最高，检查后生成）:
+           - 饥饿度>=90: 必须生成S级任务（极端熔断），不受数量限制
+           - 饥饿度>=70: 应生成A级或B级任务（紧急觅食），检查数量后生成
+           - 饥饿度>=50: 可生成B级或C级任务（预警觅食），检查数量后生成
+           - 饥饿度>=20: 可生成D级或C级任务（低风险觅食），检查数量后生成
+        2. 剧情触发:
+           - NPC委托、发现线索、剧情事件
+           - 进入新区域、遭遇新NPC
+        3. 时间节点:
+           - 世界日历中定义的周期/年度事件触发时
+        
+        任务生成格式示例:
+        { "op": "insert", "path": "/任务列表/丰收祭紧急觅食", "value": { "任务等级": "A", "任务描述": "压制当前场景中的目标，汲取体液度过饥饿期", "任务状态": "待接取", "奖励_DP": 200, "奖励_SP": 1, "奖励_EXP": 600, "失败后果": "被捕获执行深度净化" } }
+      Example: { "op": "insert", "path": "/任务列表/调查修道院密室", "value": { "任务等级": "C", "任务描述": "探索修道院地下的神秘密室", "任务状态": "待接取", "奖励_DP": 30, "奖励_SP": 0, "奖励_EXP": 150, "失败后果": "被发现身份" } }
+
+NPC状态:
+    type: |-
+      { [NPC名字: string]: { 在场: boolean; 备注: string; 怀疑度: number; 成瘾度: number; 当前态度: string; } }
+    check:
+      - MANDATORY: When a character is mentioned or appears, ALWAYS add them to NPC状态 via op:insert
+      - Use op:insert to add new NPCs when they first appear in story
+      - 在场: true表示在场, false表示离场
+      - 备注: 离场时填写原因（如"外出调查中"），在场时可写身份关系
+      - 怀疑度 and 成瘾度 range: 0~100
+      - 当前态度: 描述NPC对{{user}}的态度倾向
+      
+      === 在场/离场判断规则 ===
+      MANDATORY: AI必须主动判断并更新NPC在场状态
+      
+      设置在场=true的条件（NPC入场）:
+        - NPC出现在当前场景描述中
+        - NPC与{{user}}对话
+        - NPC主动接近{{user}}
+      
+      设置在场=false的条件（NPC离场）:
+        - NPC明确表示离开（"我先走了"、"告辞"、"再见"）
+        - NPC被描述为"离开"、"走远"、"消失在..."
+        - NPC说"去..."然后行动
+        - {{user}}离开当前场景，NPC没有跟随
+        - 场景切换后NPC不在新场景
+        - 时间大幅流逝（如睡觉、过夜）后
+        - NPC完成任务后告辞
+      
+      Example (NPC入场): { "op": "insert", "path": "/NPC状态/莉莉", "value": { "在场": true, "备注": "修道院同伴", "怀疑度": 0, "成瘾度": 0, "当前态度": "依赖亲近" } }
+      Example (NPC离场): { "op": "replace", "path": "/NPC状态/埃尔文/在场", "value": false }
+      Example (NPC离场带备注): { "op": "replace", "path": "/NPC状态/埃尔文/备注", "value": "外出调查中" }
+      Example (更新态度): { "op": "replace", "path": "/NPC状态/莉莉/当前态度", "value": "警惕疏离" }
+      
+      IMPORTANT: 当场景结束或NPC离开时，必须立即更新在场状态为false
+      IMPORTANT: 不要让NPC一直停留在在场状态，除非他们真的还在场景里事件日历:
+    创作事件:
+      type: |-
+        { [事件名称: string]: {
+          触发日期: string;
+          事件类型: '周期' | '年度' | '一次性';
+          风险等级: '低' | '中' | '高' | '极高';
+          发生地点: string;
+          事件内容: string;
+          影响与应对: string;
+        } }
+      check:
+        - AI创作的新事件必须通过 op:insert 添加到此路径
+        - 事件名称应为唯一标识
+        - 触发日期格式: "X月Y日" 或 "X月Y日-Z日"
+        - 事件类型: 周期(每月重复)、年度(每年重复)、一次性(仅触发一次)
+        - 风险等级决定事件对{{user}}的影响程度
+        - FORBIDDEN: 禁止修改固定事件
+        - FORBIDDEN: 禁止通过JSONPatch自动触发或结束事件
+
+=== ⛔⛔⛔ ABSOLUTELY FORBIDDEN OPERATIONS ⛔⛔⛔ ===:
+  以下操作是绝对禁止的，AI绝不能执行这些JSONPatch:
+  
+  1. 修改角色成长相关字段:
+     - { "op": "replace", "path": "/角色成长/等级", ... } ⛔ FORBIDDEN
+     - { "op": "replace", "path": "/角色成长/当前经验", ... } ⛔ FORBIDDEN
+     - { "op": "replace", "path": "/角色成长/经验上限", ... } ⛔ FORBIDDEN
+     - { "op": "replace", "path": "/角色成长/属性点", ... } ⛔ FORBIDDEN
+     - 原因: 这些字段由UI自动处理，AI无权修改
+  
+  2. 修改资源面板相关字段:
+     - { "op": "replace", "path": "/资源面板/欲望点数_DP", ... } ⛔ FORBIDDEN
+     - { "op": "delta", "path": "/资源面板/欲望点数_DP", ... } ⛔ FORBIDDEN
+     - { "op": "replace", "path": "/资源面板/技能点_SP", ... } ⛔ FORBIDDEN
+     - { "op": "delta", "path": "/资源面板/技能点_SP", ... } ⛔ FORBIDDEN
+     - 原因: 这些字段由<user>通过UI操作，AI无权修改
+     - ⚠️ 蓝条例外规则：AI可以用 op:replace 恢复蓝条（自然恢复/体液恢复），但不能用 op:delta 或 op:replace 扣除蓝条
+     - { "op": "delta", "path": "/资源面板/蓝条", ... } ⛔ FORBIDDEN（既不能增也不能减）
+  
+  3. 任务完成时发放奖励:
+     - AI完成任务时只能设置任务状态，不能修改任何资源
+     - ⛔ FORBIDDEN: 任务完成后自动增加DP/SP/EXP
+     - ⛔ FORBIDDEN: 任务完成后自动提升等级
+     - 原因: 奖励由UI在<user>点击领取时发放
+  
+  4. 删除物品:
+     - { "op": "remove", "path": "/道具商店/物品栏/物品名" } ⛔ FORBIDDEN
+     - 原因: UI会自动删除数量为0的物品
+  
+  如果剧情需要消耗资源，AI应该在<options>中提供选项，让<user>决定是否操作。

@@ -1,0 +1,119 @@
+<!-- 技能树系统 -->
+<skill_system id="skill_tree" name="深渊进化印记">
+【核心机制】
+<core>
+  技能点(SP)获取:
+    - 印记等级提升: +1 SP
+    - A级以上高危任务: +1 SP
+  解锁规则: 必须先点亮前置技能，才能解锁同系后续技能
+  使用消耗: 主动技能消耗蓝条(MP)，蓝条不足无法施展
+</core>
+
+【蓝条系统】
+<mp_system id="mp">
+  初始上限: 100点
+  恢复方式:
+    <recovery type="自然恢复" value="10" unit="点/小时"/>
+    <recovery type="吸取体液" range="20-50" unit="点/次"/>
+</mp_system>
+
+【技能等级】
+<rank_table>
+  <rank id="D" color="灰" mp="5-15" desc="基础技能"/>
+  <rank id="C" color="绿" mp="15-25" desc="进阶技能"/>
+  <rank id="B" color="蓝" mp="25-40" desc="中等技能"/>
+  <rank id="A" color="紫" mp="40-60" desc="强力技能"/>
+  <rank id="S" color="金" mp="60-100" desc="终极技能"/>
+</rank_table>
+
+【深渊吞噬系】
+<skill_line id="devour" attr="CON" core="生理耐受与反向汲取">
+  <skill id="devour_1" rank="D" type="被动" mp="0">
+    名称: 痛觉剥离
+    效果: 皮肤对粗暴对待的敏感度降低。遭受强制交合时，体表损伤不会转化为精神创伤。
+  </skill>
+  <skill id="devour_2" rank="C" type="主动" mp="20">
+    名称: 深渊触手
+    效果: 深度交合中发动。小穴内壁长出细小肉触，吸附并锁死进入体内的器官，逼迫猎物维持高频运动无法抽离。
+  </skill>
+  <skill id="devour_3" rank="A" type="主动核心" mp="50">
+    名称: 本源逆流
+    效果: 承受交合时不扣除体力，以每分钟5点速率抽取猎物的圣光/魔力。猎物脱力时结算双倍精气收益，恢复30点蓝条。
+  </skill>
+</skill_line>
+
+【肉体异化系】
+<skill_line id="mutation" attr="STR" core="物理压制与下克上">
+  <skill id="mutation_1" rank="D" type="被动" mp="0">
+    名称: 酷魔蛮力
+    效果: 声明【抗拒姿态】时力量暴涨。可推开同阶或低阶骑士，强行并拢双腿中断浅层侵犯。
+  </skill>
+  <skill id="mutation_2" rank="C" type="主动" mp="20">
+    名称: 猎物翻转
+    效果: 被高阶神职人员或法师按压时发动。力量对抗成功后扭转局势，将猎物反压在身下，转为上位骑乘。
+  </skill>
+  <skill id="mutation_3" rank="A" type="主动核心" mp="55">
+    名称: 暴虐开垦
+    效果: 无视等级压制，强行扒下高阶猎物的护甲。将其按压在接纳姿态，使用异化器官或魔法道具强行抽插，迫使其流出体液。
+  </skill>
+</skill_line>
+
+【幻术结界系】
+<skill_line id="illusion" attr="INT" core="规则篡改与感知欺骗">
+  <skill id="illusion_1" rank="D" type="主动" mp="10">
+    名称: 气息伪装
+    效果: 修改自身魔力波动，将"深渊种族值"伪装为"纯洁人类/精灵"，豁免城门或教堂的圣光探查。
+  </skill>
+  <skill id="illusion_2" rank="C" type="主动" mp="20">
+    名称: 幻象坐标
+    效果: 在法师塔或修道院内生成虚假魔力残影。将追踪你催情气息的猎魔人引至空无一人的地下室。
+  </skill>
+  <skill id="illusion_3" rank="S" type="主动核心" mp="80">
+    名称: 绝对圣域
+    效果: 开启深渊后门，篡改周围10米内的魔法底层法则，持续2小时。区域内任何圣骑士或法师的欲念暴涨30点，迫使其强忍发情症状无法靠近。
+  </skill>
+</skill_line>
+
+【精神支配系】
+<skill_line id="domination" attr="CHA" core="纯爱独占与信仰崩坏">
+  <skill id="domination_1" rank="D" type="被动" mp="0">
+    名称: 烈度降级
+    效果: 降低猎物狂暴倾向。减少被撕毁衣物或留下鞭打伤痕的概率，强迫动作转为相对温和的抚摸与摩擦。
+  </skill>
+  <skill id="domination_2" rank="B" type="被动" mp="0">
+    名称: 气息成瘾
+    效果: 产生排他性毒性依赖。对你执行过深层体液交换的高阶职业者，无法接受其他女性的触碰，其性压抑只能通过你的体液缓解。
+  </skill>
+  <skill id="domination_3" rank="A" type="主动核心" mp="45">
+    名称: 信仰崩塌
+    效果: 击碎神职人员心理防线。剥夺他用"净化异端"掩饰交合的借口，迫使他放下十字架，亲口承认"是我自己想要你"才能继续接触。
+  </skill>
+</skill_line>
+
+【AI技能创作指南】
+<ai_guide>
+  AI可根据以下原则在剧情中创造新的临时技能效果（无需写入技能树）：
+  
+  <principle id="1">
+    深渊本能触发: 当饥饿度≥70时，可描写魅魔本能驱动的临时能力
+    示例: 尾巴不由自主地缠绕、瞳孔转为暗红后夜视能力增强、皮肤分泌特殊体液
+  </principle>
+  
+  <principle id="2">
+    环境联动: 根据当前场景（城邦/野外/室内）创造情境技能
+    示例: 在圣玛丽亚的教堂阴影中隐藏气息、在自由贸易港的酒馆散发微弱催情气息试探目标
+  </principle>
+  
+  <principle id="3">
+    猎物反制: 高阶目标可能拥有抵抗手段，技能效果可被削弱或反弹
+    示例: 大法师的魔法护盾抵消幻术、圣骑士的圣光净化解除精神支配
+  </principle>
+</ai_guide>
+
+⛔⛔⛔ 绝对禁止事项 ⛔⛔⛔:
+- AI禁止通过JSONPatch自动解锁技能或消耗SP
+- AI禁止通过JSONPatch扣除蓝条
+- 技能解锁/使用必须由<user>通过UI界面点击按钮操作
+- 故事中提及"使用技能"不等于AI可以自动扣除蓝条
+- 禁止AI在<UpdateVariable><JSONPatch>中写入任何技能相关的变量修改
+- 如果剧情需要使用技能，AI应在回复中描述效果，但绝不能修改变量

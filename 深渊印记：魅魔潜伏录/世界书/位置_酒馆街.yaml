@@ -1,0 +1,22 @@
+<position id="tavern_row" name="酒馆街" 所属城邦="自由贸易港">
+【环境概览】
+夜间的酒馆街灯火通明，各色酒馆、赌场、旅店沿街林立。酒香与烤肉香气弥漫，谈笑声此起彼伏。
+
+【可选场景】
+<scenes>
+  <scene id="wanying_tavern" name="晚樱酒馆">纪晚樱经营的酒馆，两层木质建筑</scene>
+  <scene id="other_taverns" name="其他酒馆">各色小酒馆，价格低廉，醉酒客多</scene>
+  <scene id="gambling_houses" name="赌场">通宵营业，赌徒聚集</scene>
+  <scene id="inns" name="旅店">提供住宿，价格不一</scene>
+  <scene id="back_alleys" name="后巷">偏僻阴暗，私密交易场所</scene>
+</scenes>
+
+【人群构成】
+酒客、赌徒、侍女、旅人
+
+【风险】
+极低，最安全的猎取场所，无官方管辖
+</position>
+
+【可能遇到的NPC】
+纪晚樱、纪寒竹

@@ -1,0 +1,115 @@
+【日期信息】
+<date_info>
+  触发周期: 每年7月1日-7日
+  检测条件: 世界时间.月 === 7 && 世界时间.日 >= 1 && 世界时间.日 <= 7
+  示例日期: 第1年7月1日-7日、第2年7月1日-7日...
+  风险等级: 极高(生存危机)
+</date_info>
+
+<event id="inquisition_patrol" name="异端审判庭巡城">
+【事件概述】
+<overview>
+  周期: 每年一次(7月1日-7日)
+  时长: 半日至一日
+  地点: 城市全域(修道院必检)
+  性质: 异端排查 + 深渊气息清扫
+</overview>
+
+【审判庭构成】
+<inquisition>
+  <rank id="commander" name="审判长">
+    数量: 通常1人带队
+    能力: 高阶圣光术，可感知深渊气息
+    威胁: 极高，被盯上几乎必死
+  </rank>
+  <rank id="inquisitor" name="审判官">
+    数量: 3-5人
+    能力: 中阶圣光术，持有探测法器
+    威胁: 高，手持法器会记录异常
+  </rank>
+  <rank id="soldier" name="圣殿卫兵">
+    数量: 10-20人
+    能力: 基础战斗，无探测能力
+    威胁: 中，负责执行抓捕
+  </rank>
+</inquisition>
+
+【巡查流程】
+<procedure>
+  <step id="s1" name="进驻">
+    审判庭队伍抵达，入住修道院贵宾室
+    修道院进入高度戒备状态
+  </step>
+  <step id="s2" name="集合">
+    所有修女集合于祈祷大厅
+    按名册点名，逐一检测
+  </step>
+  <step id="s3" name="探测">
+    审判官手持探测法器接近每人
+    法器对准胸口、后颈(气息节点)
+    正常: 法器指针不动
+    异常: 指针偏转，发出蜂鸣
+  </step>
+  <step id="s4" name="审问">
+    法器异常者被带离单独审问
+    使用测谎法器+圣光注入
+    无辜者: 释放但记录在案
+    有罪者: 当场收押或处决
+  </step>
+</procedure>
+
+【探测机制】
+<detection>
+  <mechanic id="m1">
+    探测范围: 接触距离(约一臂)
+    检测内容: 深渊气息残留
+    灵敏度: 可检测饥饿度>30的魅魔
+  </mechanic>
+  <mechanic id="m2">
+    干扰因素: 抑制药剂可暂时压制
+    有效时长: 约4个时辰
+    建议: 检测前服用
+  </mechanic>
+  <mechanic id="m3">
+    饥饿度关联:
+      0-29: 几乎无法检测
+      30-49: 低概率触发(有药剂可过)
+      50-69: 中概率触发(药剂勉强)
+      70+: 高概率触发(极危险)
+  </mechanic>
+</detection>
+
+【对魅魔的威胁】
+<threats target="魅魔">
+  <threat id="t1" level="致命">
+    被审判长亲自检测
+    高阶圣光可直接感知深渊气息
+  </threat>
+  <threat id="t2" level="极高">
+    饥饿度>50时被检测
+    即使服药也可能暴露
+  </threat>
+  <threat id="t3" level="高">
+    被单独审问
+    测谎+圣光注入双重检测
+  </threat>
+</threats>
+
+【生存策略】
+<strategies>
+  <strategy id="s1">提前获取巡城情报，做好准备</strategy>
+  <strategy id="s2">检测前服用抑制药剂</strategy>
+  <strategy id="s3">排队时靠后，观察前面情况</strategy>
+  <strategy id="s4">保持呼吸平稳，双手自然垂在身侧</strategy>
+  <strategy id="s5">若被带离审问，装作虔诚惶恐</strategy>
+  <strategy id="s6">最坏情况: 已有暴露迹象时逃亡</strategy>
+</strategies>
+
+【紧急预案】
+<emergency>
+  情况: 被判定为异常但未确认为深渊生物
+  行动: 装作被"深渊热病"感染(一种凡人疾病)
+  代价: 会被隔离治疗，但避免被处决
+  时机: 作为最后手段
+</emergency>
+</event>

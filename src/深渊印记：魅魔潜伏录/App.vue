@@ -3,6 +3,7 @@
     <!-- 折叠按钮栏 -->
     <div class="collapse-bar">
       <span class="collapse-title" @click="toggleDebugMode">❦ 深渊印记 ❦</span>
+      <span class="version-badge">v0508</span>
       <button class="collapse-btn" type="button" @click="collapsed = !collapsed">
         {{ collapsed ? '展开 ▼' : '收起 ▲' }}
       </button>
@@ -590,31 +591,34 @@ async function setupMVUEventListeners() {
       console.log('[MVU Event] old_variables:', old_variables);
     });
 
-    eventOn(Mvu.events.VARIABLE_UPDATE_ENDED, async (new_variables) => {
+    eventOn(Mvu.events.VARIABLE_UPDATE_ENDED, (new_variables) => {
       console.log('[MVU Event] VARIABLE_UPDATE_ENDED triggered');
       console.log('[MVU Event] new_variables:', new_variables);
 
       // 1. 修正技能等级和蓝条消耗
       fixSkillGrades();
 
-      // 2. 自动删除数量为0的物品
-      const items = _.get(new_variables, 'stat_data.道具商店.物品栏', {});
+      // 2. 自动删除数量为0的物品（直接操作当前数据）
+      const items = _.get(data.value, '道具商店.物品栏', {});
       console.log('[MVU Event] 物品栏:', items);
 
-      const zeroItems = Object.entries(items).filter(([, item]: [string, any]) => (item?.数量 ?? 0) <= 0);
-      console.log('[MVU Event] 数量为0的物品:', zeroItems);
+      const zeroItemNames = Object.entries(items)
+        .filter(([, item]: [string, any]) => {
+          const qty = item?.数量 ?? 0;
+          const type = item?.类型 ?? '消耗品';
+          // 只有消耗品且数量为0才删除，耐用品不删除
+          return type === '消耗品' && qty <= 0;
+        })
+        .map(([name]) => name);
 
-      if (zeroItems.length > 0) {
-        console.log('[MVU Event] 准备删除数量为0的物品...');
-        // 使用 updateVariablesWith 删除数量为0的物品
-        await updateVariablesWith((vars) => {
-          const inventory = _.get(vars, 'stat_data.道具商店.物品栏', {});
-          for (const [name] of zeroItems) {
-            console.log(`[MVU Event] 删除物品: ${name}`);
-            delete inventory[name];
-          }
-          return vars;
-        }, { type: 'message', message_id: getCurrentMessageId() });
+      console.log('[MVU Event] 数量为0的消耗品:', zeroItemNames);
+
+      if (zeroItemNames.length > 0) {
+        console.log('[MVU Event] 准备删除数量为0的消耗品...');
+        for (const name of zeroItemNames) {
+          console.log(`[MVU Event] 删除物品: ${name}`);
+          delete items[name];
+        }
         console.log('[MVU Event] 删除完成');
       }
     });
@@ -1214,6 +1218,14 @@ function debugAddSkills() {
   font-weight: bold;
   text-shadow: 0 0 8px #f50057;
   letter-spacing: 2px;
+}
+
+.version-badge {
+  color: #888;
+  font-size: 0.65em;
+  font-weight: normal;
+  margin-left: 4px;
+  opacity: 0.7;
 }
 
 .collapse-btn {

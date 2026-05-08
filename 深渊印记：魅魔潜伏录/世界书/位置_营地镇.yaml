@@ -1,0 +1,23 @@
+<position id="camp_town" name="营地镇" 所属城邦="黑锋堡">
+【环境概览】
+军事要塞旁的补给小镇，石墙厚重。火把照明，士兵与平民混杂。
+
+【可选场景】
+<scenes>
+  <scene id="supply_shops" name="补给商铺">军需物资、日常用品</scene>
+  <scene id="barracks_edge" name="军营边缘">可观望操练，不可擅入</scene>
+  <scene id="tavern" name="军营酒馆">士兵消遣处</scene>
+</scenes>
+
+【人群构成】
+士兵(休班)、军属、商贩、旅人
+
+【精气价值】
+中纯度，士兵数量多
+
+【可能遇到的NPC】
+雷恩团长、影鸦、阿廖沙
+
+【风险】
+中，军纪严明但镇上较宽松
+</position>

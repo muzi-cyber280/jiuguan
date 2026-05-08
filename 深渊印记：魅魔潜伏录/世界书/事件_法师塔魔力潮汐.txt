@@ -1,0 +1,108 @@
+【日期信息】
+<date_info>
+  触发周期: 每年3月1日、6月1日、9月1日
+      检测条件: (月 === 3 || 月 === 6 || 月 === 9) && 日 === 1
+      示例日期: 第1年3月1日、第1年6月1日、第1年9月1日...</date_info>
+
+<event id="magic_tide" name="法师塔魔力潮汐">
+【事件概述】
+<overview>
+  周期: 每季度一次(3月、6月、9月1日)
+  时长: 约三个时辰(魔力峰值持续一个时辰)
+  地点: 法师塔全域
+  性质: 魔力汇聚与释放的自然现象
+</overview>
+
+【魔力变化】
+<magic_shift>
+  <phase id="rising" name="攀升期">
+    时段: 事件开始后第一个时辰
+    变化: 魔力浓度逐渐上升
+    效果: 施法消耗-10%，恢复+20%
+  </phase>
+  <phase id="peak" name="峰值期">
+    时段: 第二个时辰
+    变化: 魔力浓度达到×3倍
+    效果: 施法消耗-30%，效果×3
+    风险: 伪装护符消耗×2
+  </phase>
+  <phase id="fading" name="消退期">
+    时段: 第三个时辰
+    变化: 魔力浓度逐渐回落
+    效果: 施法消耗-15%，恢复+10%
+  </phase>
+</magic_shift>
+
+【对深渊生物的影响】
+<impact target="魅魔">
+  <effect id="e1" name="深渊共鸣">
+    触发: 魔力峰值期间
+    表现: 深渊印记剧烈震动，渴望汲取
+    效果: 可吸收空气中游离魔力转化为DP
+    收益: 每10分钟自动获得1DP(峰值期)
+  </effect>
+  <effect id="e2" name="伪装压力">
+    触发: 全程
+    原因: 高浓度魔力冲击伪装护符
+    效果: 护符消耗速度×2
+    应对: 提前准备备用护符或药剂
+  </effect>
+  <effect id="e3" name="魔力暴走风险">
+    触发: 峰值期停留塔顶
+    风险: 魔力过载可能导致深渊特征显现
+    应对: 避开塔顶，留在中下层
+  </effect>
+</impact>
+
+【法师塔动态】
+<tower_activity>
+  <activity id="a1">
+    法师们聚集进行大型实验
+    塔顶禁止非授权人员进入
+  </activity>
+  <activity id="a2">
+    学徒们兴奋讨论，警惕性下降
+    是结交获取情报的好时机
+  </activity>
+  <activity id="a3">
+    可能发生魔力暴走事故
+    混乱中可趁机动手脚
+  </activity>
+</tower_activity>
+
+【机遇与风险】
+<opportunities>
+  <opp id="o1" type="收益">
+    峰值期自动获取DP
+    无需主动行动
+  </opp>
+  <opp id="o2" type="情报">
+    法师们忙于实验，学徒无人监管
+    可趁乱查阅禁忌资料
+  </opp>
+  <opp id="o3" type="接触">
+    法师们魔力波动剧烈，精气更浓郁
+    若有机会接触，收益×1.5
+  </opp>
+</opportunities>
+
+<risks>
+  <risk id="r1">
+    伪装护符消耗加快，需提前准备
+  </risk>
+  <risk id="r2">
+    魔力暴走可能导致意外暴露
+  </risk>
+  <risk id="r3">
+    探测阵在峰值期更敏感
+  </risk>
+</risks>
+
+【生存策略】
+<strategies>
+  <strategy id="s1">提前准备备用护符或抑制药剂</strategy>
+  <strategy id="s2">避开塔顶，留在中下层</strategy>
+  <strategy id="s3">利用混乱结交学徒，获取情报</strategy>
+  <strategy id="s4">峰值期结束后尽快离开，避免被盘问</strategy>
+</strategies>
+</event>

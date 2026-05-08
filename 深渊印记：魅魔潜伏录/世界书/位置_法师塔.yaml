@@ -1,0 +1,24 @@
+<position id="mage_tower" name="法师塔" 所属城邦="艾瑟嘉德">
+【环境概览】
+螺旋塔楼，外墙刻满符文。墙壁符文和魔法阵散发着微光。
+
+【可选场景】
+<scenes>
+  <scene id="entrance" name="大厅">悬浮魔法阵展示，学徒登记处</scene>
+  <scene id="library" name="奥术图书馆">书籍自行漂浮，可查阅深渊典籍</scene>
+  <scene id="workshop" name="炼金工坊">药剂配制、附魔锻造</scene>
+  <scene id="summit" name="塔顶观测台">魔力汇聚核心，极高危</scene>
+</scenes>
+
+【人群构成】
+学徒(约30人)、正式法师(约10人)、大法师(1-2人)
+
+【可能遇到的NPC】
+(暂无)
+
+【风险】
+中高，探测阵密集，深渊气息可能被记录
+
+【特殊机制】
+塔内魔力浓度高，伪装护符消耗加快
+</position>
