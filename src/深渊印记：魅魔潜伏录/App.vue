@@ -1231,6 +1231,7 @@ function debugAddSkills() {
 }
 
 .collapse-btn {
+  margin-left: auto;
   background: linear-gradient(145deg, #d81b60, #880e4f);
   border: 1px solid #ff4081;
   border-radius: 4px;
