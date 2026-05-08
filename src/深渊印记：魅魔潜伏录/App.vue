@@ -3,7 +3,7 @@
     <!-- 折叠按钮栏 -->
     <div class="collapse-bar">
       <span class="collapse-title" @click="toggleDebugMode">❦ 深渊印记 ❦</span>
-      <span class="version-badge">v0508</span>
+      <span v-if="!collapsed" class="version-badge">v0508</span>
       <button class="collapse-btn" type="button" @click="collapsed = !collapsed">
         {{ collapsed ? '展开 ▼' : '收起 ▲' }}
       </button>
@@ -1222,10 +1222,11 @@ function debugAddSkills() {
 
 .version-badge {
   color: #888;
-  font-size: 0.65em;
+  font-size: 0.6em;
   font-weight: normal;
-  margin-left: 4px;
-  opacity: 0.7;
+  margin-left: 2px;
+  opacity: 0.6;
+  flex-shrink: 0;
 }
 
 .collapse-btn {
