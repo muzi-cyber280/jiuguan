@@ -1,7 +1,0 @@
-```
-<body>
-  <script>
-    $('body').load('https://testingcf.jsdelivr.net/gh/muzi-cyber280/jiuguan/dist/深渊印记：魅魔潜伏录/index.html')
-  </script>
-</body>
-```
