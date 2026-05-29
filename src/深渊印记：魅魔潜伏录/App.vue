@@ -3,7 +3,7 @@
     <!-- 折叠按钮栏 -->
     <div class="collapse-bar">
       <span class="collapse-title" @click="toggleDebugMode">❦ 深渊印记 ❦</span>
-      <span v-if="!collapsed" class="version-badge">v0508</span>
+      <span v-if="!collapsed" class="version-badge">v0529</span>
       <button class="collapse-btn" type="button" @click="collapsed = !collapsed">
         {{ collapsed ? '展开 ▼' : '收起 ▲' }}
       </button>
