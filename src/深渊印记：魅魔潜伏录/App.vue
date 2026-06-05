@@ -3,14 +3,22 @@
     <!-- 折叠按钮栏 -->
     <div class="collapse-bar">
       <span class="collapse-title" @click="toggleDebugMode">❦ 深渊印记 ❦</span>
-      <span v-if="!collapsed" class="version-badge">v0529</span>
+      <span v-if="!collapsed" class="version-badge">v0605</span>
       <button class="collapse-btn" type="button" @click="collapsed = !collapsed">
         {{ collapsed ? '展开 ▼' : '收起 ▲' }}
       </button>
     </div>
 
-    <!-- 可折叠内容区 -->
-    <div v-show="!collapsed" class="collapsible-content">
+    <!-- 缩放控制（独立小行，不受zoom影响） -->
+    <div v-if="!collapsed" class="zoom-bar">
+      <button class="zoom-btn" type="button" @click="zoomOut" title="缩小">−</button>
+      <span class="zoom-label">{{ zoomPercent }}%</span>
+      <button class="zoom-btn" type="button" @click="zoomIn" title="放大">+</button>
+      <button class="zoom-btn zoom-reset" type="button" @click="zoomReset" title="重置">↺</button>
+    </div>
+
+    <!-- 可折叠内容区（zoom仅作用于内容） -->
+    <div v-show="!collapsed" class="collapsible-content" :style="{ zoom: zoomPercent + '%' }">
       <!-- 分页导航 -->
       <nav class="tab-nav">
         <button
@@ -493,6 +501,28 @@ import { useDataStore } from './store';
 
 const collapsed = ref(false);
 const activeTab = ref('status');
+
+// === 缩放控制 ===
+const ZOOM_MIN = 50;
+const ZOOM_MAX = 150;
+const ZOOM_STEP = 10;
+const ZOOM_KEY = 'succubus-card-zoom';
+
+const zoomLevel = ref(Number(localStorage.getItem(ZOOM_KEY)) || 100);
+const zoomPercent = computed(() => Math.round(zoomLevel.value));
+
+function zoomIn() {
+  zoomLevel.value = Math.min(ZOOM_MAX, zoomLevel.value + ZOOM_STEP);
+  localStorage.setItem(ZOOM_KEY, String(zoomLevel.value));
+}
+function zoomOut() {
+  zoomLevel.value = Math.max(ZOOM_MIN, zoomLevel.value - ZOOM_STEP);
+  localStorage.setItem(ZOOM_KEY, String(zoomLevel.value));
+}
+function zoomReset() {
+  zoomLevel.value = 100;
+  localStorage.setItem(ZOOM_KEY, '100');
+}
 
 // === 隐藏调试模式开关 ===
 const debugMode = ref(false);
@@ -1247,6 +1277,51 @@ function debugAddSkills() {
   }
 }
 
+.zoom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  padding: 2px 0;
+}
+
+.zoom-btn {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid #880e4f;
+  border-radius: 3px;
+  color: #ff80ab;
+  font-size: 0.7em;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+
+  &:hover {
+    background: rgba(216, 27, 96, 0.4);
+    border-color: #ff4081;
+    color: #fff;
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+.zoom-label {
+  color: #ce93d8;
+  font-size: 0.65em;
+  min-width: 32px;
+  text-align: center;
+}
+
+.zoom-reset {
+  font-size: 0.8em;
+}
+
 .collapsible-content {
   display: flex;
   flex-direction: column;
@@ -1256,12 +1331,14 @@ function debugAddSkills() {
 /* 分页导航 */
 .tab-nav {
   display: flex;
+  flex-wrap: wrap;
   border-bottom: 2px solid #880e4f;
   gap: 2px;
 }
 
 .tab-btn {
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 50px;
   padding: 6px 0;
   border: none;
   border-radius: 4px 4px 0 0;
@@ -1354,7 +1431,8 @@ function debugAddSkills() {
 .resource-label {
   color: #ce93d8;
   font-size: 0.8em;
-  min-width: 130px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .resource-value {
@@ -1370,6 +1448,8 @@ function debugAddSkills() {
   font-size: 0.8em;
   margin-bottom: 4px;
   line-height: 1.4;
+  flex-wrap: wrap;
+  gap: 2px 8px;
 }
 
 .data-label {
@@ -1455,23 +1535,27 @@ function debugAddSkills() {
 .attr-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   background: rgba(0, 0, 0, 0.3);
   padding: 4px 8px;
   border-radius: 4px;
   border-left: 2px solid #d81b60;
+  gap: 4px;
+  min-width: 0;
 }
 
 .attr-label {
   color: #ce93d8;
   font-size: 0.8em;
-  min-width: 70px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .attr-value-container {
   display: flex;
   align-items: center;
   gap: 4px;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .attr-value {
@@ -1486,8 +1570,8 @@ function debugAddSkills() {
   background: linear-gradient(135deg, #4caf50, #2e7d32);
   border: none;
   color: #fff;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   font-size: 0.8em;
   cursor: pointer;
@@ -1495,6 +1579,7 @@ function debugAddSkills() {
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 
   &:hover {
     transform: scale(1.1);
@@ -1503,6 +1588,35 @@ function debugAddSkills() {
 
   &:active {
     transform: scale(0.95);
+  }
+}
+
+/* 窄屏适配 */
+@media (max-width: 400px) {
+  .dnd-attributes {
+    grid-template-columns: 1fr;
+  }
+
+  .tab-btn {
+    flex: 1 1 30%;
+    letter-spacing: 0;
+  }
+
+  .task-card-reward {
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+
+  .debug-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .section-box {
+    padding: 6px;
+  }
+
+  .succubus-card {
+    padding: 8px;
   }
 }
 
@@ -1555,6 +1669,7 @@ function debugAddSkills() {
   align-items: center;
   margin-bottom: 4px;
   gap: 6px;
+  flex-wrap: wrap;
 }
 
 .debug-complete-btn {
@@ -1801,6 +1916,8 @@ function debugAddSkills() {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 .npc-actions {
