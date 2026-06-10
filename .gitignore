@@ -18,7 +18,8 @@ components.d.ts
 .kilocode/
 .playwright-cli/
 logs/
-dist/
+dist/*
+!dist/大晟风云：乱世江湖行/
 temp_*
 *.py
 CODEBUDDY.md
