@@ -7,7 +7,7 @@
           <strong>乱世江湖行</strong>
           <small>{{ currentRegion }} · {{ currentLocation }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">v0610</span>
+        <span v-if="!collapsed" class="version-badge">v0611</span>
       </button>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -715,23 +715,52 @@ function ensureDefaultStatusEffects() {
 async function setupMVUEventListeners() {
   try {
     await waitGlobalInitialized('Mvu');
-    eventOn(Mvu.events.VARIABLE_UPDATE_ENDED, () => {
-      const bag = _.get(data.value, '物品栏', {});
+    eventOn(Mvu.events.VARIABLE_UPDATE_ENDED, (newVariables) => {
+      // 直接操作 variables.stat_data：AI 的变量补丁已写入这里，MVU 帧框架会持久化我们的修改
+      const stat = newVariables?.stat_data;
+      if (!stat) return;
+
+      // 清理数量归零的物品
+      const bag = _.get(stat, '物品栏', {});
       Object.keys(bag).forEach(name => { if ((bag[name]?.数量 ?? 0) <= 0) delete bag[name]; });
-      if (breakthroughStatus.value === '成功') {
-        _.set(data.value, '角色成长.突破状态', '无');
-        _.set(data.value, '角色成长.突破目标', '');
-        _.set(data.value, '角色成长.突破关键词', '');
-        _.set(data.value, '角色成长.突破ROLL', 0);
-        addExp(0);
-      } else if (breakthroughStatus.value === '失败') {
-        _.set(data.value, '角色成长.等级', realmLevelCap.value);
-        _.set(data.value, '角色成长.当前经验', Math.floor(getExpMax(realmLevelCap.value) * 0.8));
-        _.set(data.value, '主角状态.内力上限', Math.max(qiMax.value, getLevelQiMax(realmLevelCap.value)));
-        _.set(data.value, '角色成长.突破状态', breakthroughReady.value ? '可突破' : '无');
-        _.set(data.value, '角色成长.突破目标', '');
-        _.set(data.value, '角色成长.突破关键词', '');
-        _.set(data.value, '角色成长.突破ROLL', 0);
+
+      const btStatus = _.get(stat, '角色成长.突破状态', '无');
+      if (btStatus === '成功') {
+        const curLv = _.get(stat, '角色成长.等级', 1);
+        const curExp = _.get(stat, '角色成长.当前经验', 0);
+        const curRealm = _.get(stat, '主角状态.武学境界', '凡人');
+        const newCap = getMajorRealmLevelCap(getMajorRealmIndex(curRealm));
+
+        let lv = curLv;
+        let exp = curExp;
+        let pts = _.get(stat, '角色成长.属性点', 0);
+        while (lv < newCap && exp >= getExpMax(lv)) {
+          exp -= getExpMax(lv);
+          lv += 1;
+          pts += 1;
+        }
+
+        _.set(stat, '角色成长.等级', lv);
+        _.set(stat, '角色成长.当前经验', exp);
+        _.set(stat, '角色成长.属性点', pts);
+        _.set(stat, '主角状态.内力上限', Math.max(_.get(stat, '主角状态.内力上限', 100), getLevelQiMax(lv)));
+        _.set(stat, '主角状态.武学境界', getRealmByLevel(lv));
+        _.set(stat, '角色成长.突破状态', '无');
+        _.set(stat, '角色成长.突破目标', '');
+        _.set(stat, '角色成长.突破关键词', '');
+        _.set(stat, '角色成长.突破ROLL', 0);
+      } else if (btStatus === '失败') {
+        const curRealm = _.get(stat, '主角状态.武学境界', '凡人');
+        const capLevel = getMajorRealmLevelCap(getMajorRealmIndex(curRealm));
+
+        _.set(stat, '角色成长.等级', capLevel);
+        _.set(stat, '角色成长.当前经验', Math.floor(getExpMax(capLevel) * 0.8));
+        _.set(stat, '主角状态.内力上限', Math.max(_.get(stat, '主角状态.内力上限', 100), getLevelQiMax(capLevel)));
+        const nextR = getNextRealm(curRealm);
+        _.set(stat, '角色成长.突破状态', nextR ? '可突破' : '无');
+        _.set(stat, '角色成长.突破目标', nextR || '');
+        _.set(stat, '角色成长.突破关键词', '');
+        _.set(stat, '角色成长.突破ROLL', 0);
       }
     });
   } catch (e) {
