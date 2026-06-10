@@ -7,6 +7,7 @@
           <strong>乱世江湖行</strong>
           <small>{{ currentRegion }} · {{ currentLocation }}</small>
         </span>
+        <span v-if="!collapsed" class="version-badge">v0610</span>
       </button>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -844,6 +845,7 @@ ensureDefaultStatusEffects();
 
 .brand strong { display: block; color: var(--text); font-size: 15px; letter-spacing: 0.08em; line-height: 1.2; }
 .brand small { display: block; margin-top: 1px; color: var(--muted); font-size: 10px; line-height: 1.25; }
+.version-badge { color: var(--muted); font-size: 0.55em; font-weight: normal; opacity: 0.5; margin-left: 4px; flex-shrink: 0; letter-spacing: 0.5px; }
 .top-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 .time-chip, .ghost-btn, .round-btn { border: 1px solid var(--line); color: var(--text); background: var(--control-bg); border-radius: 8px; }
 .time-chip { padding: 4px 8px; font-size: 10px; white-space: nowrap; }
