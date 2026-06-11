@@ -467,7 +467,7 @@ const activeStatusEffects = computed(() => {
   return result;
 });
 const jianghuBadgeCount = computed(() => factionEntries.value.length + activeStatusEffects.value.length + rumorEntries.value.length + (identityActive.value ? 1 : 0));
-const longTermBadgeCount = computed(() => jianghuBadgeCount.value + relationEntries.value.length);
+const longTermBadgeCount = computed(() => jianghuBadgeCount.value);
 const hasLongTermState = computed(() => longTermBadgeCount.value > 0);
 
 const worldYear = computed(() => _.get(data.value, '世界时间.年', 1));
@@ -504,7 +504,7 @@ const tabs = computed(() => [
   { id: 'shop', label: '商铺' },
   { id: 'skill', label: '武学' },
   { id: 'character', label: '人物' },
-  { id: 'jianghu', label: '江湖', badge: jianghuBadgeCount.value || undefined },
+  { id: 'jianghu', label: '江湖' },
   { id: 'recycle', label: '回收站', badge: recycleBinCount.value || undefined },
 ]);
 
