@@ -271,7 +271,7 @@
             <div class="card-head"><strong>{{ name }}</strong><span class="status-tag" :class="getRelationClass(relation.关系值)">{{ relation.关系阶段 || '陌生' }} {{ relation.关系值 || 0 }}</span></div>
             <p v-if="relation.关系标签" class="desc">{{ relation.关系标签 }}</p>
             <p v-if="relation.最近互动" class="desc muted-desc">最近: {{ relation.最近互动 }}</p>
-            <div class="reward-row"><span>信任 {{ relation.信任点 || 0 }}</span><span>冲突 {{ relation.冲突点 || 0 }}</span></div>
+            <button class="action-btn danger" @click="softDelete('人物关系', String(name))">删除</button>
           </div>
         </section>
       </section>
@@ -313,6 +313,7 @@
             <div class="card-head"><strong>{{ stripGradePrefix(name) }}</strong><span class="status-tag pending">{{ rumor.区域 || '全境' }} · {{ rumor.热度 || '低' }}</span></div>
             <p class="desc">{{ rumor.内容 || '无内容' }}</p>
             <p class="desc muted-desc">来源: {{ rumor.来源 || '市井' }}<template v-if="rumor.关联人物?.length"> · 关联: {{ rumor.关联人物.join('、') }}</template></p>
+            <button class="action-btn danger" @click="softDelete('区域流言', String(name))">删除</button>
           </div>
         </section>
       </section>
@@ -372,7 +373,7 @@ const themeClass = computed(() => [`theme-${themeMode.value}`, `tone-${themeTone
 const dataStore = useDataStore();
 const { data } = storeToRefs(dataStore);
 
-type RecycleCategory = '物品' | '招式' | '可习得招式' | '任务' | 'NPC' | '商品';
+type RecycleCategory = '物品' | '招式' | '可习得招式' | '任务' | 'NPC' | '商品' | '区域流言' | '人物关系';
 
 const recyclePaths: Record<RecycleCategory, { source: string; target: string }> = {
   物品: { source: '物品栏', target: '回收站.已删除物品' },
@@ -381,6 +382,8 @@ const recyclePaths: Record<RecycleCategory, { source: string; target: string }> 
   任务: { source: '任务列表', target: '回收站.已删除任务' },
   NPC: { source: 'NPC状态', target: '回收站.已删除NPC' },
   商品: { source: '商铺.商品目录', target: '回收站.已删除商品' },
+  区域流言: { source: '区域流言', target: '回收站.已删除流言' },
+  人物关系: { source: '人物关系', target: '回收站.已删除人物关系' },
 };
 
 const realm = computed(() => _.get(data.value, '主角状态.武学境界', '凡人'));
@@ -487,6 +490,8 @@ const deletedUnlockable = computed(() => _.get(data.value, '回收站.已删除�
 const deletedTasks = computed(() => _.get(data.value, '回收站.已删除任务', {}) as Record<string, any>);
 const deletedNPCs = computed(() => _.get(data.value, '回收站.已删除NPC', {}) as Record<string, any>);
 const deletedCatalog = computed(() => _.get(data.value, '回收站.已删除商品', {}) as Record<string, any>);
+const deletedRumors = computed(() => _.get(data.value, '回收站.已删除流言', {}) as Record<string, any>);
+const deletedRelations = computed(() => _.get(data.value, '回收站.已删除人物关系', {}) as Record<string, any>);
 
 const recycleGroups = computed(() => [
   { title: '已删除物品', category: '物品' as const, items: deletedItems.value },
@@ -495,6 +500,8 @@ const recycleGroups = computed(() => [
   { title: '已删除任务', category: '任务' as const, items: deletedTasks.value },
   { title: '已删除人物', category: 'NPC' as const, items: deletedNPCs.value },
   { title: '已移除商品', category: '商品' as const, items: deletedCatalog.value },
+  { title: '已移除流言', category: '区域流言' as const, items: deletedRumors.value },
+  { title: '已移除人物关系', category: '人物关系' as const, items: deletedRelations.value },
 ]);
 const recycleBinCount = computed(() => recycleGroups.value.reduce((sum, group) => sum + Object.keys(group.items).length, 0));
 

@@ -111,8 +111,6 @@ export const Schema = z.object({
   人物关系: z.record(z.string().describe('人物名'), z.object({
     关系值: z.coerce.number().prefault(0),
     关系阶段: z.string().prefault('陌生'),
-    信任点: z.coerce.number().prefault(0),
-    冲突点: z.coerce.number().prefault(0),
     关系标签: z.string().prefault(''),
     最近互动: z.string().prefault(''),
   }).prefault({})).prefault({}),
@@ -155,5 +153,7 @@ export const Schema = z.object({
     已删除商品: z.record(z.string().describe('名称'), z.any()).prefault({}),
     已删除任务: z.record(z.string().describe('名称'), z.any()).prefault({}),
     已删除NPC: z.record(z.string().describe('名称'), z.any()).prefault({}),
+    已删除流言: z.record(z.string().describe('名称'), z.any()).prefault({}),
+    已删除人物关系: z.record(z.string().describe('名称'), z.any()).prefault({}),
   }).prefault({}),
 });

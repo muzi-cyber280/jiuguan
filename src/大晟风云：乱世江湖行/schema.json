@@ -555,14 +555,6 @@
             "default": "陌生",
             "type": "string"
           },
-          "信任点": {
-            "default": 0,
-            "type": "number"
-          },
-          "冲突点": {
-            "default": 0,
-            "type": "number"
-          },
           "关系标签": {
             "default": "",
             "type": "string"
@@ -754,6 +746,24 @@
           "additionalProperties": {}
         },
         "已删除NPC": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "名称"
+          },
+          "additionalProperties": {}
+        },
+        "已删除流言": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "名称"
+          },
+          "additionalProperties": {}
+        },
+        "已删除人物关系": {
           "default": {},
           "type": "object",
           "propertyNames": {
