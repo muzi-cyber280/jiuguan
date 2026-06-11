@@ -7,7 +7,7 @@
           <strong>乱世江湖行</strong>
           <small>{{ currentRegion }} · {{ currentLocation }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">v0611</span>
+        <span v-if="!collapsed" class="version-badge">v0612</span>
       </button>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -156,7 +156,7 @@
       <section v-if="activeTab === 'task'" class="tab-pane">
         <div v-for="([name, task]) in activeTasks" :key="name" class="panel highlight-panel">
           <div class="card-head">
-            <strong>{{ stripGradePrefix(name) }}</strong>
+            <strong>{{ task.任务等级 }} · {{ stripGradePrefix(name) }}</strong>
             <span class="status-tag active">进行中</span>
           </div>
           <p class="desc">{{ task.任务描述 }}</p>
@@ -179,7 +179,7 @@
         <section v-if="completedTasks.length > 0" class="panel">
           <div class="panel-title">待领取报酬</div>
           <div v-for="([name, task]) in completedTasks" :key="name" class="list-card reward-card">
-            <div class="card-head"><strong>{{ stripGradePrefix(name) }}</strong><span class="status-tag done">已完成</span></div>
+            <div class="card-head"><strong>{{ task.任务等级 }} · {{ stripGradePrefix(name) }}</strong><span class="status-tag done">已完成</span></div>
             <p class="desc">{{ task.任务描述 }}</p>
             <div class="reward-row"><span>银钱 {{ task.奖励_银钱 || 0 }} 文</span><span>经验 {{ task.奖励_经验 || 0 }}</span><span>阅历 {{ task.奖励_阅历 || 0 }}</span></div>
             <button class="action-btn success" @click="claimReward(name)">领取报酬</button>
@@ -189,7 +189,7 @@
         <section v-if="inactiveTasks.length > 0" class="panel muted-panel">
           <div class="panel-title">往期委托</div>
           <div v-for="([name, task]) in inactiveTasks" :key="name" class="list-card inactive">
-            <div class="card-head"><strong>{{ stripGradePrefix(name) }}</strong><span class="status-tag muted">{{ task.奖励已领取 ? '已领取' : task.任务状态 }}</span></div>
+            <div class="card-head"><strong>{{ task.任务等级 }} · {{ stripGradePrefix(name) }}</strong><span class="status-tag muted">{{ task.奖励已领取 ? '已领取' : task.任务状态 }}</span></div>
             <div class="button-row"><button v-if="task.任务状态 === '已失败' || task.任务状态 === '已忽略'" class="action-btn" @click="setTaskStatus(name, '待接取')">恢复</button><button class="action-btn danger" @click="softDelete('任务', name)">删除</button></div>
           </div>
         </section>
