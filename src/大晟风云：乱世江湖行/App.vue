@@ -7,7 +7,7 @@
           <strong>乱世江湖行</strong>
           <small>{{ currentRegion }} · {{ currentLocation }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">v0612</span>
+        <span v-if="!collapsed" class="version-badge">V0612早</span>
       </button>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -736,7 +736,8 @@ async function setupMVUEventListeners() {
         const curLv = _.get(stat, '角色成长.等级', 1);
         const curExp = _.get(stat, '角色成长.当前经验', 0);
         const curRealm = _.get(stat, '主角状态.武学境界', '凡人');
-        const newCap = getMajorRealmLevelCap(getMajorRealmIndex(curRealm));
+        const targetRealm = _.get(stat, '角色成长.突破目标', '');
+        const newCap = getMajorRealmLevelCap(getMajorRealmIndex(targetRealm || curRealm));
 
         let lv = curLv;
         let exp = curExp;
@@ -751,7 +752,7 @@ async function setupMVUEventListeners() {
         _.set(stat, '角色成长.当前经验', exp);
         _.set(stat, '角色成长.属性点', pts);
         _.set(stat, '主角状态.内力上限', Math.max(_.get(stat, '主角状态.内力上限', 100), getLevelQiMax(lv)));
-        _.set(stat, '主角状态.武学境界', getRealmByLevel(lv));
+        if (targetRealm) _.set(stat, '主角状态.武学境界', targetRealm);
         _.set(stat, '角色成长.突破状态', '无');
         _.set(stat, '角色成长.突破目标', '');
         _.set(stat, '角色成长.突破关键词', '');
@@ -763,9 +764,8 @@ async function setupMVUEventListeners() {
         _.set(stat, '角色成长.等级', capLevel);
         _.set(stat, '角色成长.当前经验', Math.floor(getExpMax(capLevel) * 0.8));
         _.set(stat, '主角状态.内力上限', Math.max(_.get(stat, '主角状态.内力上限', 100), getLevelQiMax(capLevel)));
-        const nextR = getNextRealm(curRealm);
-        _.set(stat, '角色成长.突破状态', nextR ? '可突破' : '无');
-        _.set(stat, '角色成长.突破目标', nextR || '');
+        _.set(stat, '角色成长.突破状态', '无');
+        _.set(stat, '角色成长.突破目标', '');
         _.set(stat, '角色成长.突破关键词', '');
         _.set(stat, '角色成长.突破ROLL', 0);
       }
