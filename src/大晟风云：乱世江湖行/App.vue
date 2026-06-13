@@ -7,7 +7,7 @@
           <strong>乱世江湖行</strong>
           <small>{{ currentRegion }} · {{ currentLocation }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0612早</span>
+        <span v-if="!collapsed" class="version-badge">V0613</span>
       </button>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -594,7 +594,6 @@ function setNpcPresence(name: string, present: boolean) {
 function claimReward(name: string) {
   const task = tasks.value[name];
   if (!task || task.奖励已领取) return;
-  _.set(data.value, '主角状态.银钱', silver.value + (task.奖励_银钱 || 0));
   addExp(task.奖励_经验 || 0);
   addInsight(task.奖励_阅历 || 0);
   task.奖励已领取 = true;

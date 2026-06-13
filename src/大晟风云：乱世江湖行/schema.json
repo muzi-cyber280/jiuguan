@@ -20,62 +20,144 @@
         }
       }
     },
-    "世界定位": {
+    "六维属性": {
       "default": {},
       "type": "object",
       "properties": {
-        "当前区域": {
-          "default": "临渊城",
-          "type": "string",
-          "enum": [
-            "铁壁关",
-            "临渊城",
-            "苍木谷",
-            "碎云山",
-            "京畿"
-          ]
+        "力道": {
+          "default": 10,
+          "type": "number"
         },
-        "当前位置": {
-          "default": "临渊城东门",
-          "type": "string"
+        "身法": {
+          "default": 10,
+          "type": "number"
         },
-        "当前场景": {
-          "default": "城门外",
-          "type": "string"
+        "根骨": {
+          "default": 10,
+          "type": "number"
         },
-        "当前事件": {
-          "default": "无",
-          "type": "string"
+        "悟性": {
+          "default": 10,
+          "type": "number"
         },
-        "当前交互对象": {
-          "default": "无",
-          "type": "string"
+        "眼力": {
+          "default": 10,
+          "type": "number"
+        },
+        "魅力": {
+          "default": 10,
+          "type": "number"
         }
       }
     },
-    "世界时间": {
+    "回收站": {
       "default": {},
       "type": "object",
       "properties": {
-        "年": {
-          "default": 307,
-          "type": "number"
+        "已删除物品": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "名称"
+          },
+          "additionalProperties": {}
         },
-        "月": {
-          "default": 7,
-          "type": "number"
+        "已删除招式": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "名称"
+          },
+          "additionalProperties": {}
         },
-        "日": {
-          "default": 1,
-          "type": "number"
+        "已删除可习得招式": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "名称"
+          },
+          "additionalProperties": {}
         },
-        "时": {
-          "default": 18,
-          "type": "number"
+        "已删除商品": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "名称"
+          },
+          "additionalProperties": {}
         },
-        "分": {
-          "default": 0,
-          "type": "number"
+        "已删除任务": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "名称"
+          },
+          "additionalProperties": {}
+        },
+        "已删除NPC": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "名称"
+          },
+          "additionalProperties": {}
+        },
+        "已删除流言": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "名称"
+          },
+          "additionalProperties": {}
+        },
+        "已删除人物关系": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "名称"
+          },
+          "additionalProperties": {}
+        }
+      }
+    },
+    "江湖身份": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "当前名号": {
+          "default": "无名外来者",
+          "type": "string"
+        },
+        "公开身份": {
+          "default": "无路引的外来客",
+          "type": "string"
+        },
+        "隐藏身份": {
+          "default": "未暴露",
+          "type": "string"
+        },
+        "名声等级": {
+          "default": "无名",
+          "type": "string"
+        },
+        "名声关键词": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "被识破风险": {
+          "default": "低",
+          "type": "string"
         }
       }
     },
@@ -135,25 +217,109 @@
         }
       }
     },
-    "主角状态": {
+    "商铺": {
       "default": {},
       "type": "object",
       "properties": {
-        "武学境界": {
-          "default": "凡胎境·一层",
-          "type": "string"
-        },
-        "内力": {
-          "default": 10,
-          "type": "number"
-        },
-        "内力上限": {
-          "default": 100,
-          "type": "number"
-        },
-        "银钱": {
-          "default": 0,
-          "type": "number"
+        "商品目录": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "商品名"
+          },
+          "additionalProperties": {
+            "default": {},
+            "type": "object",
+            "properties": {
+              "描述": {
+                "default": "",
+                "type": "string"
+              },
+              "价格_银钱": {
+                "default": 0,
+                "type": "number"
+              },
+              "类型": {
+                "default": "杂物",
+                "type": "string",
+                "enum": [
+                  "药材",
+                  "暗器",
+                  "杂物",
+                  "武学残谱",
+                  "信物"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "势力关系": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "description": "势力名"
+      },
+      "additionalProperties": {
+        "default": {},
+        "type": "object",
+        "properties": {
+          "关系值": {
+            "default": 0,
+            "type": "number"
+          },
+          "关系阶段": {
+            "default": "中立",
+            "type": "string"
+          },
+          "已知身份": {
+            "default": "外来者",
+            "type": "string"
+          },
+          "备注": {
+            "default": "",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "区域流言": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "description": "流言名"
+      },
+      "additionalProperties": {
+        "default": {},
+        "type": "object",
+        "properties": {
+          "区域": {
+            "default": "全境",
+            "type": "string"
+          },
+          "来源": {
+            "default": "市井",
+            "type": "string"
+          },
+          "热度": {
+            "default": "低",
+            "type": "string"
+          },
+          "内容": {
+            "default": "",
+            "type": "string"
+          },
+          "关联人物": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -202,33 +368,63 @@
         }
       }
     },
-    "六维属性": {
+    "状态影响": {
       "default": {},
       "type": "object",
       "properties": {
-        "力道": {
-          "default": 10,
-          "type": "number"
+        "伤势": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "等级": {
+              "default": "无",
+              "type": "string"
+            },
+            "描述": {
+              "default": "",
+              "type": "string"
+            },
+            "恢复条件": {
+              "default": "",
+              "type": "string"
+            }
+          }
         },
-        "身法": {
-          "default": 10,
-          "type": "number"
+        "中毒": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "等级": {
+              "default": "无",
+              "type": "string"
+            },
+            "描述": {
+              "default": "",
+              "type": "string"
+            },
+            "恢复条件": {
+              "default": "",
+              "type": "string"
+            }
+          }
         },
-        "根骨": {
-          "default": 10,
-          "type": "number"
-        },
-        "悟性": {
-          "default": 10,
-          "type": "number"
-        },
-        "眼力": {
-          "default": 10,
-          "type": "number"
-        },
-        "魅力": {
-          "default": 10,
-          "type": "number"
+        "通缉": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "等级": {
+              "default": "无",
+              "type": "string"
+            },
+            "区域": {
+              "default": "",
+              "type": "string"
+            },
+            "原因": {
+              "default": "",
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -336,6 +532,117 @@
         }
       }
     },
+    "人物关系": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "description": "人物名"
+      },
+      "additionalProperties": {
+        "default": {},
+        "type": "object",
+        "properties": {
+          "关系值": {
+            "default": 0,
+            "type": "number"
+          },
+          "关系阶段": {
+            "default": "陌生",
+            "type": "string"
+          },
+          "关系标签": {
+            "default": "",
+            "type": "string"
+          },
+          "最近互动": {
+            "default": "",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "世界定位": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "当前区域": {
+          "default": "临渊城",
+          "type": "string",
+          "enum": [
+            "铁壁关",
+            "临渊城",
+            "苍木谷",
+            "碎云山",
+            "京畿"
+          ]
+        },
+        "当前位置": {
+          "default": "临渊城东门",
+          "type": "string"
+        },
+        "当前场景": {
+          "default": "城门外",
+          "type": "string"
+        },
+        "当前事件": {
+          "default": "无",
+          "type": "string"
+        },
+        "当前交互对象": {
+          "default": "无",
+          "type": "string"
+        }
+      }
+    },
+    "世界时间": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "年": {
+          "default": 307,
+          "type": "number"
+        },
+        "月": {
+          "default": 7,
+          "type": "number"
+        },
+        "日": {
+          "default": 1,
+          "type": "number"
+        },
+        "时": {
+          "default": 18,
+          "type": "number"
+        },
+        "分": {
+          "default": 0,
+          "type": "number"
+        }
+      }
+    },
+    "主角状态": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "武学境界": {
+          "default": "凡胎境·一层",
+          "type": "string"
+        },
+        "内力": {
+          "default": 10,
+          "type": "number"
+        },
+        "内力上限": {
+          "default": 100,
+          "type": "number"
+        },
+        "银钱": {
+          "default": 0,
+          "type": "number"
+        }
+      }
+    },
     "物品栏": {
       "default": {},
       "type": "object",
@@ -365,45 +672,6 @@
               "武学残谱",
               "信物"
             ]
-          }
-        }
-      }
-    },
-    "商铺": {
-      "default": {},
-      "type": "object",
-      "properties": {
-        "商品目录": {
-          "default": {},
-          "type": "object",
-          "propertyNames": {
-            "type": "string",
-            "description": "商品名"
-          },
-          "additionalProperties": {
-            "default": {},
-            "type": "object",
-            "properties": {
-              "描述": {
-                "default": "",
-                "type": "string"
-              },
-              "价格_银钱": {
-                "default": 0,
-                "type": "number"
-              },
-              "类型": {
-                "default": "杂物",
-                "type": "string",
-                "enum": [
-                  "药材",
-                  "暗器",
-                  "杂物",
-                  "武学残谱",
-                  "信物"
-                ]
-              }
-            }
           }
         }
       }
@@ -503,274 +771,6 @@
             "default": "中立",
             "type": "string"
           }
-        }
-      }
-    },
-    "势力关系": {
-      "default": {},
-      "type": "object",
-      "propertyNames": {
-        "type": "string",
-        "description": "势力名"
-      },
-      "additionalProperties": {
-        "default": {},
-        "type": "object",
-        "properties": {
-          "关系值": {
-            "default": 0,
-            "type": "number"
-          },
-          "关系阶段": {
-            "default": "中立",
-            "type": "string"
-          },
-          "已知身份": {
-            "default": "外来者",
-            "type": "string"
-          },
-          "备注": {
-            "default": "",
-            "type": "string"
-          }
-        }
-      }
-    },
-    "人物关系": {
-      "default": {},
-      "type": "object",
-      "propertyNames": {
-        "type": "string",
-        "description": "人物名"
-      },
-      "additionalProperties": {
-        "default": {},
-        "type": "object",
-        "properties": {
-          "关系值": {
-            "default": 0,
-            "type": "number"
-          },
-          "关系阶段": {
-            "default": "陌生",
-            "type": "string"
-          },
-          "关系标签": {
-            "default": "",
-            "type": "string"
-          },
-          "最近互动": {
-            "default": "",
-            "type": "string"
-          }
-        }
-      }
-    },
-    "状态影响": {
-      "default": {},
-      "type": "object",
-      "properties": {
-        "伤势": {
-          "default": {},
-          "type": "object",
-          "properties": {
-            "等级": {
-              "default": "无",
-              "type": "string"
-            },
-            "描述": {
-              "default": "",
-              "type": "string"
-            },
-            "恢复条件": {
-              "default": "",
-              "type": "string"
-            }
-          }
-        },
-        "中毒": {
-          "default": {},
-          "type": "object",
-          "properties": {
-            "等级": {
-              "default": "无",
-              "type": "string"
-            },
-            "描述": {
-              "default": "",
-              "type": "string"
-            },
-            "恢复条件": {
-              "default": "",
-              "type": "string"
-            }
-          }
-        },
-        "通缉": {
-          "default": {},
-          "type": "object",
-          "properties": {
-            "等级": {
-              "default": "无",
-              "type": "string"
-            },
-            "区域": {
-              "default": "",
-              "type": "string"
-            },
-            "原因": {
-              "default": "",
-              "type": "string"
-            }
-          }
-        }
-      }
-    },
-    "江湖身份": {
-      "default": {},
-      "type": "object",
-      "properties": {
-        "当前名号": {
-          "default": "无名外来者",
-          "type": "string"
-        },
-        "公开身份": {
-          "default": "无路引的外来客",
-          "type": "string"
-        },
-        "隐藏身份": {
-          "default": "未暴露",
-          "type": "string"
-        },
-        "名声等级": {
-          "default": "无名",
-          "type": "string"
-        },
-        "名声关键词": {
-          "default": [],
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "被识破风险": {
-          "default": "低",
-          "type": "string"
-        }
-      }
-    },
-    "区域流言": {
-      "default": {},
-      "type": "object",
-      "propertyNames": {
-        "type": "string",
-        "description": "流言名"
-      },
-      "additionalProperties": {
-        "default": {},
-        "type": "object",
-        "properties": {
-          "区域": {
-            "default": "全境",
-            "type": "string"
-          },
-          "来源": {
-            "default": "市井",
-            "type": "string"
-          },
-          "热度": {
-            "default": "低",
-            "type": "string"
-          },
-          "内容": {
-            "default": "",
-            "type": "string"
-          },
-          "关联人物": {
-            "default": [],
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      }
-    },
-    "回收站": {
-      "default": {},
-      "type": "object",
-      "properties": {
-        "已删除物品": {
-          "default": {},
-          "type": "object",
-          "propertyNames": {
-            "type": "string",
-            "description": "名称"
-          },
-          "additionalProperties": {}
-        },
-        "已删除招式": {
-          "default": {},
-          "type": "object",
-          "propertyNames": {
-            "type": "string",
-            "description": "名称"
-          },
-          "additionalProperties": {}
-        },
-        "已删除可习得招式": {
-          "default": {},
-          "type": "object",
-          "propertyNames": {
-            "type": "string",
-            "description": "名称"
-          },
-          "additionalProperties": {}
-        },
-        "已删除商品": {
-          "default": {},
-          "type": "object",
-          "propertyNames": {
-            "type": "string",
-            "description": "名称"
-          },
-          "additionalProperties": {}
-        },
-        "已删除任务": {
-          "default": {},
-          "type": "object",
-          "propertyNames": {
-            "type": "string",
-            "description": "名称"
-          },
-          "additionalProperties": {}
-        },
-        "已删除NPC": {
-          "default": {},
-          "type": "object",
-          "propertyNames": {
-            "type": "string",
-            "description": "名称"
-          },
-          "additionalProperties": {}
-        },
-        "已删除流言": {
-          "default": {},
-          "type": "object",
-          "propertyNames": {
-            "type": "string",
-            "description": "名称"
-          },
-          "additionalProperties": {}
-        },
-        "已删除人物关系": {
-          "default": {},
-          "type": "object",
-          "propertyNames": {
-            "type": "string",
-            "description": "名称"
-          },
-          "additionalProperties": {}
         }
       }
     }
