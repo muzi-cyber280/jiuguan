@@ -11,6 +11,7 @@ pnpm-debug.log*
 
 auto-imports.d.ts
 components.d.ts
+<<<<<<< HEAD
 
 # 本地临时文件（不提交）
 .codebuddy/
@@ -34,3 +35,5 @@ src - 副本/
 
 # 排除所有 Markdown 文档
 *.md
+=======
+>>>>>>> 1fdfca54e89542414750e2c88ad8fca7d4a3f85c
