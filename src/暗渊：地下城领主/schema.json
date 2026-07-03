@@ -1,0 +1,484 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "玩家资料": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "性别": {
+          "default": "未选择",
+          "type": "string"
+        },
+        "特性": {
+          "default": "",
+          "type": "string"
+        },
+        "备注": {
+          "default": "",
+          "type": "string"
+        }
+      }
+    },
+    "地下城": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "城主": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "名号": {
+              "default": "新任城主",
+              "type": "string"
+            },
+            "性别": {
+              "default": "男",
+              "type": "string"
+            },
+            "生命值": {
+              "default": 50,
+              "type": "number"
+            },
+            "生命上限": {
+              "default": 50,
+              "type": "number"
+            },
+            "攻击力": {
+              "default": 8,
+              "type": "number"
+            },
+            "防御力": {
+              "default": 5,
+              "type": "number"
+            },
+            "魔力": {
+              "default": 50,
+              "type": "number"
+            },
+            "魔力上限": {
+              "default": 100,
+              "type": "number"
+            },
+            "魅惑等级": {
+              "default": 1,
+              "type": "number"
+            },
+            "描述": {
+              "default": "一位被深渊选中的新任城主，外貌由玩家设定",
+              "type": "string"
+            }
+          }
+        },
+        "楼层": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "楼层名"
+          },
+          "additionalProperties": {
+            "default": {},
+            "type": "object",
+            "properties": {
+              "主题": {
+                "default": "未设定",
+                "type": "string"
+              },
+              "防御力": {
+                "default": 0,
+                "type": "number"
+              },
+              "陷阱": {
+                "default": {},
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "description": "陷阱名"
+                },
+                "additionalProperties": {
+                  "default": {},
+                  "type": "object",
+                  "properties": {
+                    "类型": {
+                      "default": "物理",
+                      "type": "string",
+                      "enum": [
+                        "物理",
+                        "魔法",
+                        "精神",
+                        "色欲"
+                      ]
+                    },
+                    "伤害值": {
+                      "default": 0,
+                      "type": "number"
+                    },
+                    "特殊效果": {
+                      "default": "无",
+                      "type": "string"
+                    },
+                    "触发概率": {
+                      "default": 50,
+                      "type": "number"
+                    },
+                    "描述": {
+                      "default": "",
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "驻守魔物": {
+                "default": {},
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "description": "魔物名"
+                },
+                "additionalProperties": {
+                  "default": {},
+                  "type": "object",
+                  "properties": {
+                    "类型": {
+                      "default": "战斗",
+                      "type": "string",
+                      "enum": [
+                        "战斗",
+                        "辅助",
+                        "特殊",
+                        "守卫"
+                      ]
+                    },
+                    "生命值": {
+                      "default": 0,
+                      "type": "number"
+                    },
+                    "生命上限": {
+                      "default": 0,
+                      "type": "number"
+                    },
+                    "攻击力": {
+                      "default": 0,
+                      "type": "number"
+                    },
+                    "防御力": {
+                      "default": 0,
+                      "type": "number"
+                    },
+                    "特殊能力": {
+                      "default": "无",
+                      "type": "string"
+                    },
+                    "描述": {
+                      "default": "",
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "描述": {
+                "default": "",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "资源": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "魔晶": {
+              "default": 60,
+              "type": "number"
+            },
+            "灵魂碎片": {
+              "default": 5,
+              "type": "number"
+            },
+            "魔素": {
+              "default": 30,
+              "type": "number"
+            }
+          }
+        },
+        "声望": {
+          "default": 1,
+          "type": "number"
+        },
+        "日期": {
+          "default": 1,
+          "type": "number"
+        },
+        "设施": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "description": "设施名"
+          },
+          "additionalProperties": {
+            "default": {},
+            "type": "object",
+            "properties": {
+              "类型": {
+                "default": "其他",
+                "type": "string",
+                "enum": [
+                  "囚室",
+                  "调教室",
+                  "祭坛",
+                  "魔素泉",
+                  "魅魔巢穴",
+                  "宝箱陷阱",
+                  "其他"
+                ]
+              },
+              "描述": {
+                "default": "",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "闯入者": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "description": "闯入者名"
+      },
+      "additionalProperties": {
+        "default": {},
+        "type": "object",
+        "properties": {
+          "性别": {
+            "default": "女",
+            "type": "string",
+            "enum": [
+              "男",
+              "女"
+            ]
+          },
+          "种族": {
+            "default": "人类",
+            "type": "string"
+          },
+          "职业": {
+            "default": "战士",
+            "type": "string"
+          },
+          "等级": {
+            "default": 1,
+            "type": "number"
+          },
+          "生命值": {
+            "default": 10,
+            "type": "number"
+          },
+          "生命上限": {
+            "default": 10,
+            "type": "number"
+          },
+          "攻击力": {
+            "default": 2,
+            "type": "number"
+          },
+          "防御力": {
+            "default": 1,
+            "type": "number"
+          },
+          "意志力": {
+            "default": 5,
+            "type": "number"
+          },
+          "意志上限": {
+            "default": 5,
+            "type": "number"
+          },
+          "当前楼层": {
+            "default": "入口",
+            "type": "string"
+          },
+          "状态": {
+            "default": "闯入中",
+            "type": "string",
+            "enum": [
+              "闯入中",
+              "战斗中",
+              "被击败",
+              "精神崩溃",
+              "撤退"
+            ]
+          }
+        }
+      }
+    },
+    "俘获者": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "description": "俘获者名"
+      },
+      "additionalProperties": {
+        "default": {},
+        "type": "object",
+        "properties": {
+          "性别": {
+            "default": "女",
+            "type": "string",
+            "enum": [
+              "男",
+              "女"
+            ]
+          },
+          "种族": {
+            "default": "人类",
+            "type": "string"
+          },
+          "职业": {
+            "default": "战士",
+            "type": "string"
+          },
+          "原等级": {
+            "default": 1,
+            "type": "number"
+          },
+          "服从度": {
+            "default": 5,
+            "type": "number"
+          },
+          "羞耻度": {
+            "default": 20,
+            "type": "number"
+          },
+          "心理状态": {
+            "default": "抗拒",
+            "type": "string"
+          },
+          "当前位置": {
+            "default": "囚室",
+            "type": "string"
+          },
+          "身体状态": {
+            "default": "完好",
+            "type": "string"
+          },
+          "标记": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "外貌": {
+            "default": "",
+            "type": "string"
+          },
+          "备注": {
+            "default": "",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "事件日志": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "NPC": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "description": "NPC名"
+      },
+      "additionalProperties": {
+        "default": {},
+        "type": "object",
+        "properties": {
+          "在场": {
+            "default": true,
+            "type": "boolean"
+          },
+          "所在区域": {
+            "default": "地下城",
+            "type": "string"
+          },
+          "当前位置": {
+            "default": "王座之间",
+            "type": "string"
+          },
+          "状态": {
+            "default": "空闲",
+            "type": "string"
+          },
+          "好感度": {
+            "default": 50,
+            "type": "number"
+          },
+          "态度": {
+            "default": "忠诚",
+            "type": "string"
+          },
+          "备注": {
+            "default": "",
+            "type": "string"
+          },
+          "生命值": {
+            "default": 30,
+            "type": "number"
+          },
+          "生命上限": {
+            "default": 30,
+            "type": "number"
+          },
+          "攻击力": {
+            "default": 5,
+            "type": "number"
+          },
+          "防御力": {
+            "default": 3,
+            "type": "number"
+          },
+          "类型": {
+            "default": "辅助",
+            "type": "string",
+            "enum": [
+              "战斗",
+              "辅助",
+              "特殊"
+            ]
+          }
+        }
+      }
+    },
+    "当前场景": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "正在闯入": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "当前战斗": {
+          "default": "无",
+          "type": "string"
+        },
+        "当前交互": {
+          "default": "无",
+          "type": "string"
+        }
+      }
+    }
+  }
+}
