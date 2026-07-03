@@ -20,6 +20,7 @@ components.d.ts
 logs/
 dist/*
 !dist/大晟风云：乱世江湖行/
+!dist/暗渊：地下城领主/
 temp_*
 *.py
 CODEBUDDY.md
