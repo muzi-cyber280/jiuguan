@@ -1,4 +1,4 @@
-export const Schema = z.object({
+const RawSchema = z.object({
   玩家资料: z
     .object({
       性别: z.string().prefault('未选择'),
@@ -35,7 +35,7 @@ export const Schema = z.object({
                   z.string().describe('陷阱名'),
                   z
                     .object({
-                      类型: z.enum(['物理', '魔法', '精神', '色欲']).prefault('物理'),
+                      类型: z.enum(['物理', '魔法', '精神', '色欲', '宝箱']).prefault('物理'),
                       伤害值: z.coerce.number().prefault(0),
                       特殊效果: z.string().prefault('无'),
                       触发概率: z.coerce.number().transform(v => _.clamp(v, 0, 100)).prefault(50),
@@ -73,18 +73,27 @@ export const Schema = z.object({
         })
         .prefault({}),
       声望: z.coerce.number().transform(v => _.clamp(v, 0, 10)).prefault(1),
-      日期: z.coerce.number().prefault(1),
       设施: z
         .record(
           z.string().describe('设施名'),
           z
             .object({
-              类型: z.enum(['囚室', '调教室', '祭坛', '魔素泉', '魅魔巢穴', '宝箱陷阱', '其他']).prefault('其他'),
+              类型: z.enum(['囚室', '调教室', '祭坛', '魔素泉', '魅魔巢穴', '其他']).prefault('其他'),
               描述: z.string().prefault(''),
             })
             .prefault({}),
         )
         .prefault({}),
+    })
+    .prefault({}),
+
+  世界时间: z
+    .object({
+      年: z.coerce.number().transform(v => Math.max(1, v)).prefault(1),
+      月: z.coerce.number().transform(v => Math.max(1, Math.min(12, v))).prefault(1),
+      日: z.coerce.number().transform(v => Math.max(1, Math.min(30, v))).prefault(1),
+      时: z.coerce.number().transform(v => Math.max(0, Math.min(23, v))).prefault(8),
+      分: z.coerce.number().transform(v => Math.max(0, Math.min(59, v))).prefault(0),
     })
     .prefault({}),
 
@@ -150,7 +159,7 @@ export const Schema = z.object({
       z.string().describe('NPC名'),
       z
         .object({
-          在场: z.boolean().prefault(true),
+          在场: z.boolean().prefault(false),
           所在区域: z.string().prefault('地下城'),
           当前位置: z.string().prefault('王座之间'),
           状态: z.string().prefault('空闲'),
@@ -175,4 +184,82 @@ export const Schema = z.object({
     })
     .prefault({}),
 });
-export type Schema = z.output<typeof Schema>;
+export type Schema = z.output<typeof RawSchema>;
+
+export const Schema = z.preprocess((data) => {
+  const orig = data as any;
+  let d = orig;
+  let cloned = false;
+  function clone() {
+    if (!cloned) {
+      d = _.cloneDeep(orig);
+      cloned = true;
+    }
+  }
+  if (d?.地下城?.设施) {
+    let needClean = false;
+    _.forEach(d.地下城.设施, (fac: any) => {
+      if (fac?.类型 === '宝箱陷阱') needClean = true;
+    });
+    const oldNames = Object.keys(d.地下城.设施).filter(n => /^(\d+号.+|.+[号])$/.test(n) && !/^.+?\d+号$/.test(n));
+    const needRename = oldNames.length > 0;
+    if (needClean || needRename) {
+      clone();
+      _.forEach(d.地下城.设施, (fac: any, name: string) => {
+        if (fac?.类型 === '宝箱陷阱') delete d.地下城.设施[name];
+        else if (needRename) {
+          const m = name.match(/^(\d+)号(.+)$/);
+          if (m) {
+            const newName = `${m[2]}${m[1]}号`;
+            d.地下城.设施[newName] = d.地下城.设施[name];
+            delete d.地下城.设施[name];
+          }
+        }
+      });
+      if (d?.NPC) {
+        _.forEach(d.NPC, (npc: any) => {
+          const m = npc?.当前位置?.match(/^(\d+)号(.+)$/);
+          if (m) npc.当前位置 = `${m[2]}${m[1]}号`;
+        });
+      }
+      if (d?.俘获者) {
+        _.forEach(d.俘获者, (cap: any) => {
+          const m = cap?.当前位置?.match(/^(\d+)号(.+)$/);
+          if (m) cap.当前位置 = `${m[2]}${m[1]}号`;
+        });
+      }
+    }
+  }
+  if (d?.地下城?.楼层) {
+    const f = d.地下城.楼层;
+    const keys = Object.keys(f);
+    const needRename = !!f['第一层·回廊'] && !f['第一层'];
+    const needReorder = keys.length > 0 && keys[keys.length - 1] !== '王座之间' && !!f['王座之间'];
+    if (needRename || needReorder) {
+      clone();
+      const f2 = d.地下城.楼层;
+      if (needRename) {
+        f2['第一层'] = f2['第一层·回廊'];
+        delete f2['第一层·回廊'];
+      }
+      if (needReorder) {
+        const 王座 = f2['王座之间'];
+        delete f2['王座之间'];
+        f2['王座之间'] = 王座;
+      }
+    }
+    if (d?.闯入者) {
+      let needFixInv = false;
+      _.forEach(d.闯入者, (inv: any) => {
+        if (inv?.当前楼层 === '第一层·回廊') needFixInv = true;
+      });
+      if (needFixInv) {
+        clone();
+        _.forEach(d.闯入者, (inv: any) => {
+          if (inv?.当前楼层 === '第一层·回廊') inv.当前楼层 = '第一层';
+        });
+      }
+    }
+  }
+  return d;
+}, RawSchema);

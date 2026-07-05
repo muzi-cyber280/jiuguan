@@ -107,7 +107,8 @@
                         "物理",
                         "魔法",
                         "精神",
-                        "色欲"
+                        "色欲",
+                        "宝箱"
                       ]
                     },
                     "伤害值": {
@@ -206,10 +207,6 @@
           "default": 1,
           "type": "number"
         },
-        "日期": {
-          "default": 1,
-          "type": "number"
-        },
         "设施": {
           "default": {},
           "type": "object",
@@ -230,7 +227,6 @@
                   "祭坛",
                   "魔素泉",
                   "魅魔巢穴",
-                  "宝箱陷阱",
                   "其他"
                 ]
               },
@@ -240,6 +236,32 @@
               }
             }
           }
+        }
+      }
+    },
+    "世界时间": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "年": {
+          "default": 1,
+          "type": "number"
+        },
+        "月": {
+          "default": 1,
+          "type": "number"
+        },
+        "日": {
+          "default": 1,
+          "type": "number"
+        },
+        "时": {
+          "default": 8,
+          "type": "number"
+        },
+        "分": {
+          "default": 0,
+          "type": "number"
         }
       }
     },
@@ -404,7 +426,7 @@
         "type": "object",
         "properties": {
           "在场": {
-            "default": true,
+            "default": false,
             "type": "boolean"
           },
           "所在区域": {
