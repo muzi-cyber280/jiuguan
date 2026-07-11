@@ -7,7 +7,7 @@
           <strong>{{ store.data.地下城.城主.名号 }}</strong>
           <small>第{{ worldDay }}日 {{ timeString }} · 声望 {{ '★'.repeat(Math.floor(store.data.地下城.声望)) }}{{ '☆'.repeat(10 - Math.floor(store.data.地下城.声望)) }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0711c</span>
+        <span v-if="!collapsed" class="version-badge">V0711d</span>
       </div>
       <div class="top-actions">
         <template v-if="collapsed">
