@@ -37,19 +37,19 @@
               "type": "string"
             },
             "生命值": {
-              "default": 50,
+              "default": 100,
               "type": "number"
             },
             "生命上限": {
-              "default": 50,
+              "default": 100,
               "type": "number"
             },
             "攻击力": {
-              "default": 8,
+              "default": 15,
               "type": "number"
             },
             "防御力": {
-              "default": 5,
+              "default": 10,
               "type": "number"
             },
             "魔力": {
@@ -147,9 +147,12 @@
                       "enum": [
                         "战斗",
                         "辅助",
-                        "特殊",
-                        "守卫"
+                        "特殊"
                       ]
+                    },
+                    "等级": {
+                      "default": 1,
+                      "type": "number"
                     },
                     "生命值": {
                       "default": 0,
@@ -278,11 +281,7 @@
         "properties": {
           "性别": {
             "default": "女",
-            "type": "string",
-            "enum": [
-              "男",
-              "女"
-            ]
+            "type": "string"
           },
           "种族": {
             "default": "人类",
@@ -351,11 +350,7 @@
         "properties": {
           "性别": {
             "default": "女",
-            "type": "string",
-            "enum": [
-              "男",
-              "女"
-            ]
+            "type": "string"
           },
           "种族": {
             "default": "人类",
@@ -452,6 +447,10 @@
           "备注": {
             "default": "",
             "type": "string"
+          },
+          "等级": {
+            "default": 1,
+            "type": "number"
           },
           "生命值": {
             "default": 30,

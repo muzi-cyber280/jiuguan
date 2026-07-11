@@ -13,10 +13,10 @@ const RawSchema = z.object({
         .object({
           名号: z.string().prefault('新任城主'),
           性别: z.string().prefault('男'),
-          生命值: z.coerce.number().prefault(50),
-          生命上限: z.coerce.number().prefault(50),
-          攻击力: z.coerce.number().prefault(8),
-          防御力: z.coerce.number().prefault(5),
+          生命值: z.coerce.number().prefault(100),
+          生命上限: z.coerce.number().prefault(100),
+          攻击力: z.coerce.number().prefault(15),
+          防御力: z.coerce.number().prefault(10),
           魔力: z.coerce.number().prefault(50),
           魔力上限: z.coerce.number().prefault(100),
           魅惑等级: z.coerce.number().transform(v => _.clamp(v, 0, 10)).prefault(1),
@@ -49,7 +49,8 @@ const RawSchema = z.object({
                   z.string().describe('魔物名'),
                   z
                     .object({
-                      类型: z.enum(['战斗', '辅助', '特殊', '守卫']).prefault('战斗'),
+                      类型: z.enum(['战斗', '辅助', '特殊']).prefault('战斗'),
+                      等级: z.coerce.number().transform(v => Math.max(1, Math.min(20, v))).prefault(1),
                       生命值: z.coerce.number().prefault(0),
                       生命上限: z.coerce.number().prefault(0),
                       攻击力: z.coerce.number().prefault(0),
@@ -102,7 +103,7 @@ const RawSchema = z.object({
       z.string().describe('闯入者名'),
       z
         .object({
-          性别: z.enum(['男', '女']).prefault('女'),
+          性别: z.string().prefault('女'),
           种族: z.string().prefault('人类'),
           职业: z.string().prefault('战士'),
           等级: z.coerce.number().prefault(1),
@@ -124,7 +125,7 @@ const RawSchema = z.object({
       z.string().describe('俘获者名'),
       z
         .object({
-          性别: z.enum(['男', '女']).prefault('女'),
+          性别: z.string().prefault('女'),
           种族: z.string().prefault('人类'),
           职业: z.string().prefault('战士'),
           原等级: z.coerce.number().prefault(1),
@@ -166,6 +167,7 @@ const RawSchema = z.object({
           好感度: z.coerce.number().transform(v => _.clamp(v, 0, 100)).prefault(50),
           态度: z.string().prefault('忠诚'),
           备注: z.string().prefault(''),
+          等级: z.coerce.number().transform(v => Math.max(1, Math.min(20, v))).prefault(1),
           生命值: z.coerce.number().prefault(30),
           生命上限: z.coerce.number().prefault(30),
           攻击力: z.coerce.number().prefault(5),
