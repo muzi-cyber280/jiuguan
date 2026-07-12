@@ -49,6 +49,7 @@ const RawSchema = z.object({
                   z.string().describe('魔物名'),
                   z
                     .object({
+                      档位: z.string().prefault('普通'),
                       类型: z.string().prefault('战斗'),
                       等级: z.coerce.number().transform(v => Math.max(1, Math.min(20, v))).prefault(1),
                       生命值: z.coerce.number().prefault(0),

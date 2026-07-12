@@ -7,7 +7,7 @@
           <strong>{{ store.data.地下城.城主.名号 }}</strong>
           <small>第{{ worldDay }}日 {{ timeString }} · 声望 {{ '★'.repeat(Math.floor(store.data.地下城.声望)) }}{{ '☆'.repeat(10 - Math.floor(store.data.地下城.声望)) }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0711j</span>
+        <span v-if="!collapsed" class="version-badge">V0712</span>
       </div>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -151,7 +151,11 @@
             <button v-for="(c, t) in 魔物费用表" :key="t" class="build-btn xs" type="button" :disabled="!checkResource(c.魔晶, c.碎片, c.魔力)" @click="executeBuild('build', () => exec召唤魔物(name, t)); mobMenuFloor = null">{{ t }}<small>{{ fmtCost(c.魔晶, c.碎片) }}+{{ c.魔力 }}魔力</small></button>
           </div>
           <div v-if="mobUpgradeFloor === name && !_.isEmpty(floor.驻守魔物)" class="sub-menu">
-            <button v-for="(mob, mn) in floor.驻守魔物" :key="mn" class="build-btn xs" type="button" :disabled="mob.等级 >= 20 || !checkResource(mob.等级 * 3, 0, 0)" @click="executeBuild('build', () => exec升级魔物(name, mn)); mobUpgradeFloor = null">{{ mn }} Lv{{ mob.等级 }}→{{ mob.等级 + 1 }}<small>{{ mob.等级 * 3 }}魔晶</small></button>
+            <template v-for="(mob, mn) in floor.驻守魔物" :key="mn">
+              <button class="build-btn xs" type="button" :disabled="mob.等级 >= 20 || !checkResource(mob.等级 * 3, 0, 0)" @click="executeBuild('build', () => exec升级魔物(name, mn))">{{ mn }} {{ mob.档位 && mob.档位 !== '普通' ? `[${mob.档位}]` : '' }} Lv{{ mob.等级 }}→{{ mob.等级 + 1 }}<small>{{ mob.等级 * 3 }}魔晶</small></button>
+              <button v-if="(mob.档位 || '普通') === '普通' && mob.等级 >= 4" class="build-btn xs evolve-btn" type="button" :disabled="!checkResource(0, 2, 10)" @click="executeBuild('build', () => exec进化魔物(name, mn))">进化<small>2碎片+10魔力</small></button>
+              <button v-if="mob.档位 === '精英' && mob.等级 >= 10" class="build-btn xs advance-btn" type="button" :disabled="!checkResource(0, 5, 10)" @click="executeBuild('build', () => exec进阶魔物(name, mn))">进阶<small>5碎片+10魔力</small></button>
+            </template>
           </div>
         </div>
 
@@ -607,7 +611,7 @@ function exec召唤魔物(floorName: string, 魔物档位: string): BuildResult 
   if (!checkResource(c.魔晶, c.碎片, c.魔力)) return { 成功: false, 描述: `召唤${魔物档位}→${floorName}资源不足(需${fmtCost(c.魔晶, c.碎片)}+${c.魔力}魔力)` };
   deductResource(c.魔晶, c.碎片, c.魔力);
   const 档位提示 = 魔物档位 === '普通魔物' ? '普通(Lv1~3)' : 魔物档位 === '精英魔物' ? '精英(Lv4~8)' : '首领(Lv10~15)';
-  return { 成功: true, 描述: `召唤${魔物档位}→${floorName}(-${fmtCost(c.魔晶, c.碎片)},-${c.魔力}魔力)`, 额外: `[AI需在JSONPatch中insert魔物到/地下城/楼层/${floorName}/驻守魔物/{魔物名}，档位:${档位提示}，生成属性:等级/类型/生命值/生命上限/攻击力/防御力/特殊能力/描述。数值公式:HP=等级×10,ATK=等级×2,DEF=等级×1.5(取整)]` };
+  return { 成功: true, 描述: `召唤${魔物档位}→${floorName}(-${fmtCost(c.魔晶, c.碎片)},-${c.魔力}魔力)`, 额外: `[AI需在JSONPatch中insert魔物到/地下城/楼层/${floorName}/驻守魔物/{魔物名}，档位:${档位提示}，生成属性:档位/等级/类型/生命值/生命上限/攻击力/防御力/特殊能力/描述。档位填"${魔物档位 === '普通魔物' ? '普通' : 魔物档位 === '精英魔物' ? '精英' : '首领'}"。数值公式:HP=等级×10,ATK=等级×2,DEF=等级×1.5(取整)]` };
 }
 
 function exec升级NPC(name: string): BuildResult {
@@ -634,6 +638,34 @@ function exec升级魔物(floorName: string, mobName: string): BuildResult {
   mob.生命上限 += 10; mob.生命值 += 10;
   mob.攻击力 += 2; mob.防御力 += 2;
   return { 成功: true, 描述: `${mobName}升级 Lv${mob.等级 - 1}→${mob.等级}(-${魔晶}魔晶,HP上限+10/ATK+2/DEF+2)` };
+}
+
+function exec进化魔物(floorName: string, mobName: string): BuildResult {
+  const mob = store.data.地下城.楼层[floorName]?.驻守魔物?.[mobName];
+  if (!mob) return { 成功: false, 描述: `${mobName}不存在` };
+  if ((mob as any).档位 && (mob as any).档位 !== '普通') return { 成功: false, 描述: `${mobName}已进化或非普通档位` };
+  if (mob.等级 < 4) return { 成功: false, 描述: `${mobName}等级不足(需Lv4)` };
+  const 碎片 = 2, 魔力 = 10;
+  if (!checkResource(0, 碎片, 魔力)) return { 成功: false, 描述: `进化${mobName}资源不足(需${碎片}碎片+${魔力}魔力)` };
+  deductResource(0, 碎片, 魔力);
+  (mob as any).档位 = '精英';
+  mob.生命上限 += 20; mob.生命值 += 20;
+  mob.攻击力 += 4; mob.防御力 += 4;
+  return { 成功: true, 描述: `${mobName}进化！普通→精英(-${碎片}碎片-${魔力}魔力,HP上限+20/ATK+4/DEF+4)`, 额外: `[AI需在JSONPatch中replace /地下城/楼层/${floorName}/驻守魔物/${mobName}/描述 为进化后的新形态描述，replace /地下城/楼层/${floorName}/驻守魔物/${mobName}/特殊能力 为进化后获得的新能力]` };
+}
+
+function exec进阶魔物(floorName: string, mobName: string): BuildResult {
+  const mob = store.data.地下城.楼层[floorName]?.驻守魔物?.[mobName];
+  if (!mob) return { 成功: false, 描述: `${mobName}不存在` };
+  if ((mob as any).档位 !== '精英') return { 成功: false, 描述: `${mobName}非精英档位，无法进阶` };
+  if (mob.等级 < 10) return { 成功: false, 描述: `${mobName}等级不足(需Lv10)` };
+  const 碎片 = 5, 魔力 = 10;
+  if (!checkResource(0, 碎片, 魔力)) return { 成功: false, 描述: `进阶${mobName}资源不足(需${碎片}碎片+${魔力}魔力)` };
+  deductResource(0, 碎片, 魔力);
+  (mob as any).档位 = '首领';
+  mob.生命上限 += 30; mob.生命值 += 30;
+  mob.攻击力 += 6; mob.防御力 += 6;
+  return { 成功: true, 描述: `${mobName}进阶！精英→首领(-${碎片}碎片-${魔力}魔力,HP上限+30/ATK+6/DEF+6)`, 额外: `[AI需在JSONPatch中replace /地下城/楼层/${floorName}/驻守魔物/${mobName}/描述 为进阶后的霸气形态描述，replace /地下城/楼层/${floorName}/驻守魔物/${mobName}/特殊能力 为进阶后获得的强大能力]` };
 }
 
 function fmtCostFull(魔晶 = 0, 碎片 = 0, 魔素 = 0): string {
@@ -770,7 +802,12 @@ const 费用预览表 = computed(() => [
   ..._.flatMap(store.data.地下城.楼层, (floor, name) => [
     ..._.map(陷阱费用表, (c, t) => ({ 项目: `布置${t}→${name}`, 费用: `${fmtCostFull(c.魔晶, c.碎片, c.魔素)}+${c.魔力}魔力`, 执行: () => exec布置陷阱(name, t), 禁用: !checkResource(c.魔晶, c.碎片, c.魔力, c.魔素) })),
     ..._.map(魔物费用表, (c, t) => ({ 项目: `召唤${t}→${name}`, 费用: `${fmtCost(c.魔晶, c.碎片)}+${c.魔力}魔力`, 执行: () => exec召唤魔物(name, t), 禁用: !checkResource(c.魔晶, c.碎片, c.魔力) })),
-    ..._.map(floor.驻守魔物, (mob, mn) => ({ 项目: `升级${mn}→${name}`, 费用: `${mob.等级 * 3}魔晶`, 执行: () => exec升级魔物(name, mn), 禁用: mob.等级 >= 20 || !checkResource(mob.等级 * 3, 0, 0) })),
+    ..._.flatMap(floor.驻守魔物, (mob: any, mn: string) => {
+      const items: any[] = [{ 项目: `升级${mn}→${name}`, 费用: `${mob.等级 * 3}魔晶`, 执行: () => exec升级魔物(name, mn), 禁用: mob.等级 >= 20 || !checkResource(mob.等级 * 3, 0, 0) }];
+      if ((mob.档位 || '普通') === '普通' && mob.等级 >= 4) items.push({ 项目: `进化${mn}→${name}`, 费用: `2碎片+10魔力`, 执行: () => exec进化魔物(name, mn), 禁用: !checkResource(0, 2, 10) });
+      if (mob.档位 === '精英' && mob.等级 >= 10) items.push({ 项目: `进阶${mn}→${name}`, 费用: `5碎片+10魔力`, 执行: () => exec进阶魔物(name, mn), 禁用: !checkResource(0, 5, 10) });
+      return items;
+    }),
   ]),
   ..._.map(store.data.NPC, (npc, name) => ({ 项目: `升级${name}`, 费用: `${npc.等级 * 5}魔晶+1碎片`, 执行: () => exec升级NPC(name), 禁用: npc.等级 >= 20 || !checkResource(npc.等级 * 5, 1, 0) })),
 ]);
@@ -1100,6 +1137,8 @@ function testAddLog() {
 .build-btn.sm small { font-size: 9px; }
 .build-btn.xs { flex-direction: row; gap: 3px; padding: 2px 6px; font-size: 10px; }
 .build-btn.xs small { font-size: 8px; }
+.build-btn.evolve-btn { border-color: #7a5aba; background: rgba(122,90,186,0.15); }
+.build-btn.advance-btn { border-color: #ba5a5a; background: rgba(186,90,90,0.15); }
 .floor-actions { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--subtle-line); }
 .sub-menu { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; padding-left: 4px; }
 

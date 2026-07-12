@@ -134,6 +134,10 @@
                   "default": {},
                   "type": "object",
                   "properties": {
+                    "档位": {
+                      "default": "普通",
+                      "type": "string"
+                    },
                     "类型": {
                       "default": "战斗",
                       "type": "string"
