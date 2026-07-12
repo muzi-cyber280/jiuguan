@@ -35,7 +35,7 @@ const RawSchema = z.object({
                   z.string().describe('陷阱名'),
                   z
                     .object({
-                      类型: z.enum(['物理', '魔法', '精神', '色欲', '宝箱']).prefault('物理'),
+                      类型: z.string().prefault('物理'),
                       伤害值: z.coerce.number().prefault(0),
                       特殊效果: z.string().prefault('无'),
                       触发概率: z.coerce.number().transform(v => _.clamp(v, 0, 100)).prefault(50),
@@ -49,7 +49,7 @@ const RawSchema = z.object({
                   z.string().describe('魔物名'),
                   z
                     .object({
-                      类型: z.enum(['战斗', '辅助', '特殊']).prefault('战斗'),
+                      类型: z.string().prefault('战斗'),
                       等级: z.coerce.number().transform(v => Math.max(1, Math.min(20, v))).prefault(1),
                       生命值: z.coerce.number().prefault(0),
                       生命上限: z.coerce.number().prefault(0),
@@ -79,7 +79,7 @@ const RawSchema = z.object({
           z.string().describe('设施名'),
           z
             .object({
-              类型: z.enum(['囚室', '调教室', '祭坛', '魔素泉', '魅魔巢穴', '其他']).prefault('其他'),
+              类型: z.string().prefault('其他'),
               描述: z.string().prefault(''),
             })
             .prefault({}),
@@ -114,7 +114,7 @@ const RawSchema = z.object({
           意志力: z.coerce.number().prefault(5),
           意志上限: z.coerce.number().prefault(5),
           当前楼层: z.string().prefault('入口'),
-          状态: z.enum(['闯入中', '战斗中', '被击败', '精神崩溃', '撤退']).prefault('闯入中'),
+          状态: z.string().prefault('闯入中'),
         })
         .prefault({}),
     )
@@ -172,7 +172,7 @@ const RawSchema = z.object({
           生命上限: z.coerce.number().prefault(30),
           攻击力: z.coerce.number().prefault(5),
           防御力: z.coerce.number().prefault(3),
-          类型: z.enum(['战斗', '辅助', '特殊']).prefault('辅助'),
+          类型: z.string().prefault('辅助'),
         })
         .prefault({}),
     )

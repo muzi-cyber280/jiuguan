@@ -102,14 +102,7 @@
                   "properties": {
                     "类型": {
                       "default": "物理",
-                      "type": "string",
-                      "enum": [
-                        "物理",
-                        "魔法",
-                        "精神",
-                        "色欲",
-                        "宝箱"
-                      ]
+                      "type": "string"
                     },
                     "伤害值": {
                       "default": 0,
@@ -143,12 +136,7 @@
                   "properties": {
                     "类型": {
                       "default": "战斗",
-                      "type": "string",
-                      "enum": [
-                        "战斗",
-                        "辅助",
-                        "特殊"
-                      ]
+                      "type": "string"
                     },
                     "等级": {
                       "default": 1,
@@ -223,15 +211,7 @@
             "properties": {
               "类型": {
                 "default": "其他",
-                "type": "string",
-                "enum": [
-                  "囚室",
-                  "调教室",
-                  "祭坛",
-                  "魔素泉",
-                  "魅魔巢穴",
-                  "其他"
-                ]
+                "type": "string"
               },
               "描述": {
                 "default": "",
@@ -325,14 +305,7 @@
           },
           "状态": {
             "default": "闯入中",
-            "type": "string",
-            "enum": [
-              "闯入中",
-              "战斗中",
-              "被击败",
-              "精神崩溃",
-              "撤退"
-            ]
+            "type": "string"
           }
         }
       }
@@ -470,12 +443,7 @@
           },
           "类型": {
             "default": "辅助",
-            "type": "string",
-            "enum": [
-              "战斗",
-              "辅助",
-              "特殊"
-            ]
+            "type": "string"
           }
         }
       }
