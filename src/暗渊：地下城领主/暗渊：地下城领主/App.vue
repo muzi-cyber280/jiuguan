@@ -7,7 +7,7 @@
           <strong>{{ store.data.地下城.城主.名号 }}</strong>
           <small>第{{ worldDay }}日 {{ timeString }} · 声望 {{ '★'.repeat(Math.floor(store.data.地下城.声望)) }}{{ '☆'.repeat(10 - Math.floor(store.data.地下城.声望)) }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0712f</span>
+        <span v-if="!collapsed" class="version-badge">V0713</span>
       </div>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -267,15 +267,7 @@
         </div>
       </section>
 
-      <section v-if="activeTab === 'log'" class="tab-pane">
-        <div v-if="store.data.事件日志.length === 0" class="empty-state">暂无事件记录</div>
-        <div class="log-list">
-          <div v-for="(event, i) in reversedLog" :key="i" class="log-entry">
-            <span class="log-day">Day{{ logDay(event) }}</span>
-            <span class="log-text">{{ logText(event) }}</span>
-          </div>
-        </div>
-      </section>
+
 
       <section v-if="activeTab === 'test'" class="tab-pane test-panel">
         <div class="panel test-section">
@@ -362,7 +354,6 @@
             <button class="test-btn" type="button" @click="testInjectInvader">+闯入者</button>
             <button class="test-btn" type="button" @click="testInjectCaptive">+俘获者</button>
             <button class="test-btn" type="button" @click="testInjectNPC">+部下</button>
-            <button class="test-btn" type="button" @click="testAddLog">+日志</button>
             <button class="test-btn warn" type="button" @click="testClearAllEntities">清空实体</button>
           </div>
         </div>
@@ -742,7 +733,6 @@ const tabs = computed(() => [
   { id: 'npc', label: '部下', badge: npcCount.value || undefined },
   { id: 'invader', label: '闯入者', badge: invaderCount.value || undefined },
   { id: 'captive', label: '俘获者', badge: captiveCount.value || undefined },
-  { id: 'log', label: '事件日志' },
   ...(testMode.value ? [{ id: 'test' as const, label: '测试' }] : []),
 ]);
 
@@ -764,18 +754,10 @@ function npcAttitudeClass(favor: number) {
   return 'muted';
 }
 
-const reversedLog = computed(() => _(store.data.事件日志).takeRight(20).reverse().value());
 const worldDay = computed(() => _.get(store.data, '世界时间.日', 1));
 const worldHour = computed(() => _.get(store.data, '世界时间.时', 8));
 const worldMinute = computed(() => _.get(store.data, '世界时间.分', 0));
 const timeString = computed(() => `${String(worldHour.value).padStart(2, '0')}:${String(worldMinute.value).padStart(2, '0')}`);
-function logDay(event: string): string {
-  const m = event.match(/第(\d+)日/);
-  return m ? m[1] : String(worldDay.value);
-}
-function logText(event: string): string {
-  return event.replace(/^第\d+日\s*/, '');
-}
 
 const 楼层数 = computed(() => _.size(store.data.地下城.楼层));
 const 魅惑升级碎片 = computed(() => store.data.地下城.城主.魅惑等级 * 3);
@@ -949,10 +931,6 @@ function testClearAllEntities() {
   store.data.当前场景.正在闯入 = [];
   store.data.当前场景.当前战斗 = '无';
   store.data.当前场景.当前交互 = '无';
-}
-
-function testAddLog() {
-  store.data.事件日志.push(`第${testGet('世界时间.日', 1)}日 测试事件${store.data.事件日志.length + 1}`);
 }
 </script>
 
@@ -1164,10 +1142,7 @@ function testAddLog() {
 
 .empty-state { color: var(--muted); text-align: center; padding: 18px; font-size: 12px; }
 
-.log-list { display: flex; flex-direction: column; gap: 6px; max-height: 360px; overflow-y: auto; }
-.log-entry { display: flex; gap: 8px; padding: 6px 9px; background: var(--panel-2); border: 1px solid var(--subtle-line); border-left: 2px solid var(--accent); border-radius: 6px; font-size: 12px; line-height: 1.4; }
-.log-day { color: var(--gold); font-weight: 800; flex-shrink: 0; font-size: 11px; }
-.log-text { color: var(--desc); }
+
 
 .invader-panel.st-战斗中 { border-color: var(--line-strong); }
 .invader-panel.st-被击败 { opacity: 0.72; }

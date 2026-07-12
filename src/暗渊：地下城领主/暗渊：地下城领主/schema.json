@@ -379,13 +379,6 @@
         }
       }
     },
-    "事件日志": {
-      "default": [],
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
     "NPC": {
       "default": {},
       "type": "object",

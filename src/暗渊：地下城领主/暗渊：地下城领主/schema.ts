@@ -154,8 +154,6 @@ const RawSchema = z.object({
     )
     .prefault({}),
 
-  事件日志: z.array(z.string()).prefault([]),
-
   NPC: z
     .record(
       z.string().describe('NPC名'),
