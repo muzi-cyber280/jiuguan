@@ -135,38 +135,38 @@
           </div>
           <div v-if="!_.isEmpty(floor.驻守魔物)" class="tag-section">
             <span class="tag-label">魔物</span>
-            <template v-for="(mob, mn) in floor.驻守魔物" :key="mn">
-              <span class="tag mob-tag" :class="'mob-' + (mob.档位 || '普通')" @click="toggleMobDetail(name + '/' + mn)">
-                <span v-if="mob.档位 && mob.档位 !== '普通'" class="tier-mark">{{ mob.档位 }}</span>{{ mn }} <small>Lv{{ mob.等级 }} HP {{ mob.生命值 }}/{{ mob.生命上限 }}</small>
-              </span>
-              <div v-if="expandedMob === name + '/' + mn" class="mob-detail-card" :class="'mob-detail-' + (mob.档位 || '普通')">
-                <div class="mob-detail-header">
-                  <strong>{{ mn }}</strong>
-                  <span class="tier-badge" :class="'tier-' + (mob.档位 || '普通')">{{ mob.档位 || '普通' }}</span>
-                </div>
-                <div class="mob-detail-stats">
-                  <span>类型</span><b>{{ mob.类型 || '—' }}</b>
-                  <span>等级</span><b>Lv{{ mob.等级 }}</b>
-                  <span>生命</span><b>{{ mob.生命值 }} / {{ mob.生命上限 }}</b>
-                  <span>攻击</span><b>{{ mob.攻击力 }}</b>
-                  <span>防御</span><b>{{ mob.防御力 }}</b>
-                </div>
-                <div v-if="mob.特殊能力 && mob.特殊能力 !== '无'" class="mob-detail-row">
-                  <span class="mob-detail-label">特殊能力</span>
-                  <p>{{ mob.特殊能力 }}</p>
-                </div>
-                <div v-if="mob.描述" class="mob-detail-row">
-                  <span class="mob-detail-label">描述</span>
-                  <p>{{ mob.描述 }}</p>
-                </div>
-                <div class="mob-detail-actions">
-                  <button class="build-btn xs" type="button" :disabled="mob.等级 >= 20 || !checkResource(mob.等级 * 3, 0, 0)" @click="executeBuild('build', () => exec升级魔物(name, mn))">升级→Lv{{ mob.等级 + 1 }}<small>{{ mob.等级 * 3 }}魔晶</small></button>
-                  <button v-if="(mob.档位 || '普通') === '普通' && mob.等级 >= 4" class="build-btn xs evolve-btn" type="button" :disabled="!checkResource(0, 2, 10)" @click="executeBuild('build', () => exec进化魔物(name, mn))">进化<small>2碎片+10魔力</small></button>
-                  <button v-if="mob.档位 === '精英' && mob.等级 >= 10" class="build-btn xs advance-btn" type="button" :disabled="!checkResource(0, 5, 10)" @click="executeBuild('build', () => exec进阶魔物(name, mn))">进阶<small>5碎片+10魔力</small></button>
-                </div>
-              </div>
-            </template>
+            <span v-for="(mob, mn) in floor.驻守魔物" :key="mn" class="tag mob-tag" :class="'mob-' + (mob.档位 || '普通')" @click="toggleMobDetail(name + '/' + mn)">
+              <span v-if="mob.档位 && mob.档位 !== '普通'" class="tier-mark">{{ mob.档位 }}</span>{{ mn }} <small>Lv{{ mob.等级 }} HP {{ mob.生命值 }}/{{ mob.生命上限 }}</small>
+            </span>
           </div>
+          <template v-for="(mob, mn) in floor.驻守魔物" :key="'detail-' + mn">
+            <div v-if="expandedMob === name + '/' + mn" class="mob-detail-card" :class="'mob-detail-' + (mob.档位 || '普通')">
+              <div class="mob-detail-header">
+                <strong>{{ mn }}</strong>
+                <span class="tier-badge" :class="'tier-' + (mob.档位 || '普通')">{{ mob.档位 || '普通' }}</span>
+              </div>
+              <div class="mob-detail-stats">
+                <span>类型</span><b>{{ mob.类型 || '—' }}</b>
+                <span>等级</span><b>Lv{{ mob.等级 }}</b>
+                <span>生命</span><b>{{ mob.生命值 }} / {{ mob.生命上限 }}</b>
+                <span>攻击</span><b>{{ mob.攻击力 }}</b>
+                <span>防御</span><b>{{ mob.防御力 }}</b>
+              </div>
+              <div v-if="mob.特殊能力 && mob.特殊能力 !== '无'" class="mob-detail-row">
+                <span class="mob-detail-label">特殊能力</span>
+                <p>{{ mob.特殊能力 }}</p>
+              </div>
+              <div v-if="mob.描述" class="mob-detail-row">
+                <span class="mob-detail-label">描述</span>
+                <p>{{ mob.描述 }}</p>
+              </div>
+              <div class="mob-detail-actions">
+                <button class="build-btn xs" type="button" :disabled="mob.等级 >= 20 || !checkResource(mob.等级 * 3, 0, 0)" @click="executeBuild('build', () => exec升级魔物(name, mn))">升级→Lv{{ mob.等级 + 1 }}<small>{{ mob.等级 * 3 }}魔晶</small></button>
+                <button v-if="(mob.档位 || '普通') === '普通' && mob.等级 >= 4" class="build-btn xs evolve-btn" type="button" :disabled="!checkResource(0, 2, 10)" @click="executeBuild('build', () => exec进化魔物(name, mn))">进化<small>2碎片+10魔力</small></button>
+                <button v-if="mob.档位 === '精英' && mob.等级 >= 10" class="build-btn xs advance-btn" type="button" :disabled="!checkResource(0, 5, 10)" @click="executeBuild('build', () => exec进阶魔物(name, mn))">进阶<small>5碎片+10魔力</small></button>
+              </div>
+            </div>
+          </template>
           <div class="floor-actions">
             <button class="build-btn sm" type="button" :disabled="floor.防御力 >= store.data.地下城.声望 * 5 || !checkResource(强化防御魔晶(floor.防御力), 0, 5)" @click="executeBuild('build', () => exec强化防御(name, floor.防御力))">强化防御<small>{{ 强化防御魔晶(floor.防御力) }}魔晶</small></button>
             <button class="build-btn sm" type="button" @click="trapMenuFloor = trapMenuFloor === name ? null : name; mobMenuFloor = null; mobUpgradeFloor = null">布置陷阱<small>10魔晶起</small></button>
