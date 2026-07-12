@@ -176,8 +176,8 @@
           <div v-if="mobUpgradeFloor === name && !_.isEmpty(floor.驻守魔物)" class="sub-menu">
             <template v-for="(mob, mn) in floor.驻守魔物" :key="mn">
               <button class="build-btn xs" type="button" :disabled="mob.等级 >= 20 || !checkResource(mob.等级 * 3, 0, 0)" @click="executeBuild('build', () => exec升级魔物(name, mn))">{{ mn }} {{ mob.档位 && mob.档位 !== '普通' ? `[${mob.档位}]` : '' }} Lv{{ mob.等级 }}→{{ mob.等级 + 1 }}<small>{{ mob.等级 * 3 }}魔晶</small></button>
-              <button v-if="(mob.档位 || '普通') === '普通' && mob.等级 >= 4" class="build-btn xs evolve-btn" type="button" :disabled="!checkResource(0, 2, 10)" @click="executeBuild('build', () => exec进化魔物(name, mn))">进化<small>2碎片+10魔力</small></button>
-              <button v-if="mob.档位 === '精英' && mob.等级 >= 10" class="build-btn xs advance-btn" type="button" :disabled="!checkResource(0, 5, 10)" @click="executeBuild('build', () => exec进阶魔物(name, mn))">进阶<small>5碎片+10魔力</small></button>
+              <button v-if="(mob.档位 || '普通') === '普通' && mob.等级 >= 4" class="build-btn xs evolve-btn" type="button" :disabled="!checkResource(0, 2, 10)" @click="executeBuild('build', () => exec进化魔物(name, mn))">{{ mn }} 进化<small>2碎片+10魔力</small></button>
+              <button v-if="mob.档位 === '精英' && mob.等级 >= 10" class="build-btn xs advance-btn" type="button" :disabled="!checkResource(0, 5, 10)" @click="executeBuild('build', () => exec进阶魔物(name, mn))">{{ mn }} 进阶<small>5碎片+10魔力</small></button>
             </template>
           </div>
         </div>
@@ -1123,7 +1123,7 @@ function testAddLog() {
 .trap-色欲 { border-color: #c455a0; color: #e070c0; }
 .mob-普通 { border-color: var(--blood); color: var(--blood); }
 .mob-精英 { border-color: #7a5aba; color: #b896e8; }
-.mob-首领 { border-color: #8b6914; color: #d4a017; }
+.mob-首领 { border-color: #8b2500; color: #d4881a; }
 .mob-tag { cursor: pointer; user-select: none; transition: filter 0.15s; }
 .mob-tag:hover { filter: brightness(1.3); }
 .tier-mark { font-size: 8px; font-weight: 900; padding: 0 3px; margin-right: 3px; border-radius: 2px; }
@@ -1131,13 +1131,13 @@ function testAddLog() {
 .mob-detail-card { width: 100%; margin: 4px 0; padding: 8px 10px; border: 1px solid var(--subtle-line); border-radius: 8px; background: var(--soft-bg); font-size: 11px; line-height: 1.5; }
 .mob-detail-普通 { border-left: 3px solid var(--blood); }
 .mob-detail-精英 { border-left: 3px solid #7a5aba; }
-.mob-detail-首领 { border-left: 3px solid #8b6914; }
+.mob-detail-首领 { border-left: 3px solid #8b2500; }
 .mob-detail-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
 .mob-detail-header strong { font-size: 13px; }
 .tier-badge { font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; }
 .tier-普通 { background: rgba(178,34,34,0.25); color: #e85050; }
 .tier-精英 { background: rgba(122,90,186,0.25); color: #b896e8; }
-.tier-首领 { background: rgba(139,105,20,0.3); color: #d4a017; }
+.tier-首领 { background: rgba(139,37,0,0.3); color: #d4881a; }
 .mob-detail-stats { display: grid; grid-template-columns: auto 1fr auto 1fr; gap: 3px 8px; margin-bottom: 6px; }
 .mob-detail-stats span { color: var(--muted); font-size: 10px; }
 .mob-detail-stats b { font-size: 11px; text-align: left; }
