@@ -7,7 +7,7 @@
           <strong>{{ store.data.地下城.城主.名号 }}</strong>
           <small>第{{ worldDay }}日 {{ timeString }} · 声望 {{ '★'.repeat(Math.floor(store.data.地下城.声望)) }}{{ '☆'.repeat(10 - Math.floor(store.data.地下城.声望)) }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0712</span>
+        <span v-if="!collapsed" class="version-badge">V0712a</span>
       </div>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -135,8 +135,8 @@
           </div>
           <div v-if="!_.isEmpty(floor.驻守魔物)" class="tag-section">
             <span class="tag-label">魔物</span>
-            <span v-for="(mob, mn) in floor.驻守魔物" :key="mn" class="tag" :class="'mob-' + mob.类型">
-              {{ mn }} <small>Lv{{ mob.等级 }} HP {{ mob.生命值 }}/{{ mob.生命上限 }}</small>
+            <span v-for="(mob, mn) in floor.驻守魔物" :key="mn" class="tag" :class="'mob-' + (mob.档位 || '普通')" :title="mobTooltip(mob)">
+              <span v-if="mob.档位 && mob.档位 !== '普通'" class="tier-mark">{{ mob.档位 }}</span>{{ mn }} <small>Lv{{ mob.等级 }} HP {{ mob.生命值 }}/{{ mob.生命上限 }}</small>
             </span>
           </div>
           <div class="floor-actions">
@@ -724,6 +724,18 @@ function npcHpPct(npc: { 生命值: number; 生命上限: number }) { return npc
 function invStatusClass(status: string) {
   return { 闯入中: 'active', 战斗中: 'danger-tag', 被击败: 'muted', 精神崩溃: 'captive-tag', 撤退: 'muted' }[status] || 'muted';
 }
+function mobTooltip(mob: any): string {
+  const lines = [
+    `档位: ${mob.档位 || '普通'}`,
+    `类型: ${mob.类型 || '战斗'}`,
+    `等级: Lv${mob.等级}`,
+    `HP: ${mob.生命值}/${mob.生命上限}`,
+    `ATK: ${mob.攻击力}  DEF: ${mob.防御力}`,
+  ];
+  if (mob.特殊能力 && mob.特殊能力 !== '无') lines.push(`特殊能力: ${mob.特殊能力}`);
+  if (mob.描述) lines.push(`描述: ${mob.描述}`);
+  return lines.join('\n');
+}
 function npcAttitudeClass(favor: number) {
   if (favor >= 81) return 'captive-tag';
   if (favor >= 61) return 'done';
@@ -1094,9 +1106,11 @@ function testAddLog() {
 .trap-魔法 { border-color: #4a7fb0; color: #6aafff; }
 .trap-精神 { border-color: var(--purple); color: var(--purple); }
 .trap-色欲 { border-color: #c455a0; color: #e070c0; }
-.mob-战斗 { border-color: var(--blood); color: var(--blood); }
-.mob-辅助 { border-color: var(--gold); color: var(--gold); }
-.mob-特殊 { border-color: var(--purple); color: #b080e0; }
+.mob-普通 { border-color: var(--blood); color: var(--blood); }
+.mob-精英 { border-color: #7a5aba; color: #b896e8; }
+.mob-首领 { border-color: #ba8a2a; color: #f0c050; }
+.tier-mark { font-size: 8px; font-weight: 900; padding: 0 2px; margin-right: 2px; border-radius: 2px; background: currentColor; color: var(--bg) !important; }
+.tag[title] { cursor: help; }
 .lv-tag { border-color: var(--gold); color: var(--gold); font-weight: bold; }
 
 .mark-tag { border-color: var(--blood); color: var(--blood); background: rgba(196, 30, 58, 0.1); }
