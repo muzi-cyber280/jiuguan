@@ -159,6 +159,11 @@
                   <span class="mob-detail-label">描述</span>
                   <p>{{ mob.描述 }}</p>
                 </div>
+                <div class="mob-detail-actions">
+                  <button class="build-btn xs" type="button" :disabled="mob.等级 >= 20 || !checkResource(mob.等级 * 3, 0, 0)" @click="executeBuild('build', () => exec升级魔物(name, mn))">升级→Lv{{ mob.等级 + 1 }}<small>{{ mob.等级 * 3 }}魔晶</small></button>
+                  <button v-if="(mob.档位 || '普通') === '普通' && mob.等级 >= 4" class="build-btn xs evolve-btn" type="button" :disabled="!checkResource(0, 2, 10)" @click="executeBuild('build', () => exec进化魔物(name, mn))">进化<small>2碎片+10魔力</small></button>
+                  <button v-if="mob.档位 === '精英' && mob.等级 >= 10" class="build-btn xs advance-btn" type="button" :disabled="!checkResource(0, 5, 10)" @click="executeBuild('build', () => exec进阶魔物(name, mn))">进阶<small>5碎片+10魔力</small></button>
+                </div>
               </div>
             </template>
           </div>
@@ -1144,6 +1149,7 @@ function testAddLog() {
 .mob-detail-row { margin-top: 4px; }
 .mob-detail-label { font-size: 9px; font-weight: 700; color: var(--muted); display: block; margin-bottom: 2px; }
 .mob-detail-row p { margin: 0; font-size: 11px; line-height: 1.5; }
+.mob-detail-actions { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
 .lv-tag { border-color: var(--gold); color: var(--gold); font-weight: bold; }
 
 .mark-tag { border-color: var(--blood); color: var(--blood); background: rgba(196, 30, 58, 0.1); }
