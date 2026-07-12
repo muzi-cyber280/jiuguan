@@ -128,7 +128,7 @@ const RawSchema = z.object({
           性别: z.string().prefault('女'),
           种族: z.string().prefault('人类'),
           职业: z.string().prefault('战士'),
-          原等级: z.coerce.number().prefault(1),
+          等级: z.coerce.number().prefault(1),
           服从度: z.coerce.number().transform(v => _.clamp(v, 0, 100)).prefault(5),
           羞耻度: z.coerce.number().transform(v => _.clamp(v, 0, 100)).prefault(20),
           心理状态: z.string().prefault('抗拒'),

@@ -7,7 +7,7 @@
           <strong>{{ store.data.地下城.城主.名号 }}</strong>
           <small>第{{ worldDay }}日 {{ timeString }} · 声望 {{ '★'.repeat(Math.floor(store.data.地下城.声望)) }}{{ '☆'.repeat(10 - Math.floor(store.data.地下城.声望)) }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0711h</span>
+        <span v-if="!collapsed" class="version-badge">V0711i</span>
       </div>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -216,7 +216,7 @@
             <strong>{{ name }}</strong>
             <span class="status-tag captive-tag">{{ cap.$服从度阶段 }}</span>
           </div>
-          <p class="desc muted-desc">{{ cap.性别 }} · {{ cap.种族 }} · {{ cap.职业 }} · Lv{{ cap.原等级 }}</p>
+          <p class="desc muted-desc">{{ cap.性别 }} · {{ cap.种族 }} · {{ cap.职业 }} · Lv{{ cap.等级 }}</p>
           <div class="bar-shell"><div class="bar-fill obey" :style="{ width: cap.服从度 + '%' }"></div><span>服从 {{ cap.服从度 }}</span></div>
           <div class="bar-shell"><div class="bar-fill shame" :style="{ width: cap.羞耻度 + '%' }"></div><span>羞耻 {{ cap.羞耻度 }}</span></div>
           <div class="data-grid small">
@@ -647,7 +647,7 @@ function fmtCostFull(魔晶 = 0, 碎片 = 0, 魔素 = 0): string {
 function exec转化暗堕(name: string, cap: any): BuildResult {
   if (!store.data.俘获者[name]) return { 成功: false, 描述: '俘获者不存在' };
   const 类型 = ['战士', '圣骑士', '武僧'].includes(cap.职业) ? '战斗' : ['法师', '牧师', '术士'].includes(cap.职业) ? '辅助' : '特殊';
-  const lv = cap.原等级 || 1;
+  const lv = cap.等级 || 1;
   delete (store.data.俘获者 as any)[name];
   _.set(store.data.NPC, name, {
     在场: true, 所在区域: '地下城', 当前位置: '王座之间', 状态: '空闲',
@@ -799,7 +799,7 @@ function quickScenario(场景: string) {
       _.forEach(store.data.俘获者, c => { c.服从度 = 100; });
       if (_.isEmpty(store.data.俘获者)) {
         _.set(store.data.俘获者, '测试英雄', {
-          性别: '女', 种族: '人类', 职业: '圣骑士', 原等级: 5,
+          性别: '女', 种族: '人类', 职业: '圣骑士', 等级: 5,
           服从度: 100, 羞耻度: 80, 心理状态: '完全臣服', 当前位置: '囚室',
           身体状态: '项圈', 标记: ['奴隶印记', '项圈'], 外貌: '金发碧眼，浑身烙印', 备注: '',
         });
@@ -857,7 +857,7 @@ function testInjectInvader() {
 function testInjectCaptive() {
   const id = `测试俘获者${_.size(store.data.俘获者) + 1}`;
   _.set(store.data.俘获者, id, {
-    性别: '女', 种族: '人类', 职业: '法师', 原等级: 3,
+    性别: '女', 种族: '人类', 职业: '法师', 等级: 3,
     服从度: 15, 羞耻度: 30, 心理状态: '抗拒', 当前位置: '囚室',
     身体状态: '完好', 标记: [], 外貌: '测试用', 备注: '',
   });

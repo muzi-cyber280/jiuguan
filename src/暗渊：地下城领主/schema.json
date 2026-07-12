@@ -360,7 +360,7 @@
             "default": "战士",
             "type": "string"
           },
-          "原等级": {
+          "等级": {
             "default": 1,
             "type": "number"
           },
