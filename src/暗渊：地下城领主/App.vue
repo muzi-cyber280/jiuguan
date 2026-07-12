@@ -7,7 +7,7 @@
           <strong>{{ store.data.地下城.城主.名号 }}</strong>
           <small>第{{ worldDay }}日 {{ timeString }} · 声望 {{ '★'.repeat(Math.floor(store.data.地下城.声望)) }}{{ '☆'.repeat(10 - Math.floor(store.data.地下城.声望)) }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0712a</span>
+        <span v-if="!collapsed" class="version-badge">V0712b</span>
       </div>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -135,9 +135,32 @@
           </div>
           <div v-if="!_.isEmpty(floor.驻守魔物)" class="tag-section">
             <span class="tag-label">魔物</span>
-            <span v-for="(mob, mn) in floor.驻守魔物" :key="mn" class="tag" :class="'mob-' + (mob.档位 || '普通')" :title="mobTooltip(mob)">
-              <span v-if="mob.档位 && mob.档位 !== '普通'" class="tier-mark">{{ mob.档位 }}</span>{{ mn }} <small>Lv{{ mob.等级 }} HP {{ mob.生命值 }}/{{ mob.生命上限 }}</small>
-            </span>
+            <template v-for="(mob, mn) in floor.驻守魔物" :key="mn">
+              <span class="tag mob-tag" :class="'mob-' + (mob.档位 || '普通')" @click="toggleMobDetail(name + '/' + mn)">
+                <span v-if="mob.档位 && mob.档位 !== '普通'" class="tier-mark">{{ mob.档位 }}</span>{{ mn }} <small>Lv{{ mob.等级 }} HP {{ mob.生命值 }}/{{ mob.生命上限 }}</small>
+              </span>
+              <div v-if="expandedMob === name + '/' + mn" class="mob-detail-card" :class="'mob-detail-' + (mob.档位 || '普通')">
+                <div class="mob-detail-header">
+                  <strong>{{ mn }}</strong>
+                  <span class="tier-badge" :class="'tier-' + (mob.档位 || '普通')">{{ mob.档位 || '普通' }}</span>
+                </div>
+                <div class="mob-detail-stats">
+                  <span>类型</span><b>{{ mob.类型 || '—' }}</b>
+                  <span>等级</span><b>Lv{{ mob.等级 }}</b>
+                  <span>生命</span><b>{{ mob.生命值 }} / {{ mob.生命上限 }}</b>
+                  <span>攻击</span><b>{{ mob.攻击力 }}</b>
+                  <span>防御</span><b>{{ mob.防御力 }}</b>
+                </div>
+                <div v-if="mob.特殊能力 && mob.特殊能力 !== '无'" class="mob-detail-row">
+                  <span class="mob-detail-label">特殊能力</span>
+                  <p>{{ mob.特殊能力 }}</p>
+                </div>
+                <div v-if="mob.描述" class="mob-detail-row">
+                  <span class="mob-detail-label">描述</span>
+                  <p>{{ mob.描述 }}</p>
+                </div>
+              </div>
+            </template>
           </div>
           <div class="floor-actions">
             <button class="build-btn sm" type="button" :disabled="floor.防御力 >= store.data.地下城.声望 * 5 || !checkResource(强化防御魔晶(floor.防御力), 0, 5)" @click="executeBuild('build', () => exec强化防御(name, floor.防御力))">强化防御<small>{{ 强化防御魔晶(floor.防御力) }}魔晶</small></button>
@@ -651,7 +674,7 @@ function exec进化魔物(floorName: string, mobName: string): BuildResult {
   (mob as any).档位 = '精英';
   mob.生命上限 += 20; mob.生命值 += 20;
   mob.攻击力 += 4; mob.防御力 += 4;
-  return { 成功: true, 描述: `${mobName}进化！普通→精英(-${碎片}碎片-${魔力}魔力,HP上限+20/ATK+4/DEF+4)`, 额外: `[AI需在JSONPatch中replace /地下城/楼层/${floorName}/驻守魔物/${mobName}/描述 为进化后的新形态描述，replace /地下城/楼层/${floorName}/驻守魔物/${mobName}/特殊能力 为进化后获得的新能力]` };
+  return { 成功: true, 描述: `${mobName}进化！普通→精英(-${碎片}碎片-${魔力}魔力,HP上限+20/ATK+4/DEF+4)`, 额外: `[AI需更新魔物：可用move将/地下城/楼层/${floorName}/驻守魔物/${mobName}重命名为进化后的新名字（如"哥布林勇士"），然后replace /描述 为进化后的新形态描述，replace /特殊能力 为进化后获得的新能力。不要重复insert或remove]` };
 }
 
 function exec进阶魔物(floorName: string, mobName: string): BuildResult {
@@ -665,7 +688,7 @@ function exec进阶魔物(floorName: string, mobName: string): BuildResult {
   (mob as any).档位 = '首领';
   mob.生命上限 += 30; mob.生命值 += 30;
   mob.攻击力 += 6; mob.防御力 += 6;
-  return { 成功: true, 描述: `${mobName}进阶！精英→首领(-${碎片}碎片-${魔力}魔力,HP上限+30/ATK+6/DEF+6)`, 额外: `[AI需在JSONPatch中replace /地下城/楼层/${floorName}/驻守魔物/${mobName}/描述 为进阶后的霸气形态描述，replace /地下城/楼层/${floorName}/驻守魔物/${mobName}/特殊能力 为进阶后获得的强大能力]` };
+  return { 成功: true, 描述: `${mobName}进阶！精英→首领(-${碎片}碎片-${魔力}魔力,HP上限+30/ATK+6/DEF+6)`, 额外: `[AI需更新魔物：可用move将/地下城/楼层/${floorName}/驻守魔物/${mobName}重命名为进阶后的霸气新名字（如"深渊哥布林王"），然后replace /描述 为进阶后的霸气形态描述，replace /特殊能力 为进阶后获得的强大能力。不要重复insert或remove]` };
 }
 
 function fmtCostFull(魔晶 = 0, 碎片 = 0, 魔素 = 0): string {
@@ -724,17 +747,9 @@ function npcHpPct(npc: { 生命值: number; 生命上限: number }) { return npc
 function invStatusClass(status: string) {
   return { 闯入中: 'active', 战斗中: 'danger-tag', 被击败: 'muted', 精神崩溃: 'captive-tag', 撤退: 'muted' }[status] || 'muted';
 }
-function mobTooltip(mob: any): string {
-  const lines = [
-    `档位: ${mob.档位 || '普通'}`,
-    `类型: ${mob.类型 || '战斗'}`,
-    `等级: Lv${mob.等级}`,
-    `HP: ${mob.生命值}/${mob.生命上限}`,
-    `ATK: ${mob.攻击力}  DEF: ${mob.防御力}`,
-  ];
-  if (mob.特殊能力 && mob.特殊能力 !== '无') lines.push(`特殊能力: ${mob.特殊能力}`);
-  if (mob.描述) lines.push(`描述: ${mob.描述}`);
-  return lines.join('\n');
+const expandedMob = ref<string | null>(null);
+function toggleMobDetail(key: string) {
+  expandedMob.value = expandedMob.value === key ? null : key;
 }
 function npcAttitudeClass(favor: number) {
   if (favor >= 81) return 'captive-tag';
@@ -1108,9 +1123,27 @@ function testAddLog() {
 .trap-色欲 { border-color: #c455a0; color: #e070c0; }
 .mob-普通 { border-color: var(--blood); color: var(--blood); }
 .mob-精英 { border-color: #7a5aba; color: #b896e8; }
-.mob-首领 { border-color: #ba8a2a; color: #f0c050; }
-.tier-mark { font-size: 8px; font-weight: 900; padding: 0 2px; margin-right: 2px; border-radius: 2px; background: currentColor; color: var(--bg) !important; }
-.tag[title] { cursor: help; }
+.mob-首领 { border-color: #8b6914; color: #d4a017; }
+.mob-tag { cursor: pointer; user-select: none; transition: filter 0.15s; }
+.mob-tag:hover { filter: brightness(1.3); }
+.tier-mark { font-size: 8px; font-weight: 900; padding: 0 3px; margin-right: 3px; border-radius: 2px; }
+.tier-mark { background: rgba(255,255,255,0.15); }
+.mob-detail-card { width: 100%; margin: 4px 0; padding: 8px 10px; border: 1px solid var(--subtle-line); border-radius: 8px; background: var(--soft-bg); font-size: 11px; line-height: 1.5; }
+.mob-detail-普通 { border-left: 3px solid var(--blood); }
+.mob-detail-精英 { border-left: 3px solid #7a5aba; }
+.mob-detail-首领 { border-left: 3px solid #8b6914; }
+.mob-detail-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.mob-detail-header strong { font-size: 13px; }
+.tier-badge { font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; }
+.tier-普通 { background: rgba(178,34,34,0.25); color: #e85050; }
+.tier-精英 { background: rgba(122,90,186,0.25); color: #b896e8; }
+.tier-首领 { background: rgba(139,105,20,0.3); color: #d4a017; }
+.mob-detail-stats { display: grid; grid-template-columns: auto 1fr auto 1fr; gap: 3px 8px; margin-bottom: 6px; }
+.mob-detail-stats span { color: var(--muted); font-size: 10px; }
+.mob-detail-stats b { font-size: 11px; text-align: left; }
+.mob-detail-row { margin-top: 4px; }
+.mob-detail-label { font-size: 9px; font-weight: 700; color: var(--muted); display: block; margin-bottom: 2px; }
+.mob-detail-row p { margin: 0; font-size: 11px; line-height: 1.5; }
 .lv-tag { border-color: var(--gold); color: var(--gold); font-weight: bold; }
 
 .mark-tag { border-color: var(--blood); color: var(--blood); background: rgba(196, 30, 58, 0.1); }
