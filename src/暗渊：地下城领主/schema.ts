@@ -164,9 +164,9 @@ const RawSchema = z.object({
       z.string().describe('NPC名'),
       z
         .object({
-          性别: z.string().prefault('女'),
-          种族: z.string().prefault('人类'),
-          职业: z.string().prefault('战士'),
+          性别: z.string().prefault(''),
+          种族: z.string().prefault(''),
+          职业: z.string().prefault(''),
           在场: z.boolean().prefault(false),
           当前位置: z.string().prefault('王座之间'),
           状态: z.string().prefault('空闲'),

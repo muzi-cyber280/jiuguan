@@ -417,15 +417,15 @@
         "type": "object",
         "properties": {
           "性别": {
-            "default": "女",
+            "default": "",
             "type": "string"
           },
           "种族": {
-            "default": "人类",
+            "default": "",
             "type": "string"
           },
           "职业": {
-            "default": "战士",
+            "default": "",
             "type": "string"
           },
           "在场": {

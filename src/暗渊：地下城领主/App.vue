@@ -7,7 +7,7 @@
           <strong>{{ store.data.地下城.城主.名号 }}</strong>
           <small>第{{ worldDay }}日 {{ timeString }} · 声望 {{ '★'.repeat(Math.floor(store.data.地下城.声望)) }}{{ '☆'.repeat(10 - Math.floor(store.data.地下城.声望)) }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0714h</span>
+        <span v-if="!collapsed" class="version-badge">V0714i</span>
       </div>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -236,7 +236,7 @@
             <span v-else class="status-tag absent-tag">离场</span>
             <span class="status-tag" :class="npcAttitudeClass(npc.好感度)">{{ npc.态度 }}</span>
           </div>
-          <p class="desc muted-desc">{{ npc.性别 }} · {{ npc.种族 }} · {{ npc.职业 }} · {{ npc.类型 }}</p>
+          <p v-if="npc.性别 || npc.种族 || npc.职业" class="desc muted-desc">{{ [npc.性别, npc.种族, npc.职业, npc.类型].filter(Boolean).join(' · ') }}</p>
           <div class="bar-shell"><div class="bar-fill favor" :style="{ width: npc.好感度 + '%' }"></div><span>好感 {{ npc.好感度 }}</span></div>
           <div class="bar-shell"><div class="bar-fill hp" :style="{ width: npcHpPct(npc) + '%' }"></div><span>HP {{ npc.生命值 }} / {{ npc.生命上限 }}</span></div>
           <div class="stat-row">
