@@ -7,7 +7,7 @@
           <strong>{{ store.data.地下城.城主.名号 }}</strong>
           <small>第{{ worldDay }}日 {{ timeString }} · 声望 {{ '★'.repeat(Math.floor(store.data.地下城.声望)) }}{{ '☆'.repeat(10 - Math.floor(store.data.地下城.声望)) }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0714j</span>
+        <span v-if="!collapsed" class="version-badge">V0714k</span>
       </div>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -853,7 +853,7 @@ function exec融合(captiveName: string, cap: any, floorName: string, mobName: s
   return {
     成功: true,
     描述: `${captiveName}与${mobName}融合！成为部下(Lv${newLv} HP${newHp}/ATK${newAtk}/DEF${newDef} 好感${Math.floor((cap.服从度 ?? 5) * 0.5)})`,
-    额外: `[AI需生成融合形态：1.用replace修改/NPC/${captiveName}/外貌，描写融合后的新外貌（参考世界书融合炼金中${mob.档位 ?? '普通'}档${mob.类型 ?? '战斗'}型魔物的特征表）2.用replace修改/NPC/${captiveName}/融合特征，总结外貌变化（如"猫耳、猫尾、竖瞳"）3.用replace修改/NPC/${captiveName}/融合能力，列出继承的特殊能力 4.用replace修改/NPC/${captiveName}/技能，设置2-3个战斗技能。不要重复insert或remove]`,
+    额外: `[AI需生成融合形态（必须是美观的兽娘/魔物娘风格，保留角色美貌和身材，只添加兽耳/尾巴/鳞片等萌系特征，不要猎奇畸形）：1.用replace修改/NPC/${captiveName}/外貌，描写融合后的新外貌（参考世界书融合炼金中${mob.档位 ?? '普通'}档${mob.类型 ?? '战斗'}型魔物的特征表）2.用replace修改/NPC/${captiveName}/融合特征，总结外貌变化（如"猫耳、猫尾、竖瞳"）3.用replace修改/NPC/${captiveName}/融合能力，列出继承的特殊能力 4.用replace修改/NPC/${captiveName}/技能，设置2-3个战斗技能。不要重复insert或remove]`,
   };
 }
 
@@ -886,7 +886,7 @@ function exec融合NPC(npcName: string, npc: any, floorName: string, mobName: st
   return {
     成功: true,
     描述: `${npcName}与${mobName}融合！(第${次数 + 1}次 HP+${Math.floor(mob.生命上限 * 系数 * 倍率)}/ATK+${Math.floor(mob.攻击力 * 系数 * 倍率)}/DEF+${Math.floor(mob.防御力 * 系数 * 倍率)})`,
-    额外: `[AI需更新融合形态：1.用replace修改/NPC/${npcName}/外貌，追加新融合特征描写 2.用replace修改/NPC/${npcName}/融合特征，追加新特征 3.用replace修改/NPC/${npcName}/融合能力，追加继承的新能力。不要重复insert或remove]`,
+    额外: `[AI需更新融合形态（兽娘/魔物娘风格，美观不猎奇）：1.用replace修改/NPC/${npcName}/外貌，追加新融合特征描写 2.用replace修改/NPC/${npcName}/融合特征，追加新特征 3.用replace修改/NPC/${npcName}/融合能力，追加继承的新能力。不要重复insert或remove]`,
   };
 }
 
