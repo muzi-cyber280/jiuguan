@@ -7,7 +7,7 @@
           <strong>{{ store.data.地下城.城主.名号 }}</strong>
           <small>第{{ worldDay }}日 {{ timeString }} · 声望 {{ '★'.repeat(Math.floor(store.data.地下城.声望)) }}{{ '☆'.repeat(10 - Math.floor(store.data.地下城.声望)) }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0714b</span>
+        <span v-if="!collapsed" class="version-badge">V0714c</span>
       </div>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -772,7 +772,6 @@ function executeBuild(action: 'build' | 'convert', key: string, ...args: any[]) 
     undoStack.value.push({ snapshot, prevInput, key });
     if (undoTimer) clearTimeout(undoTimer);
     undoTimer = setTimeout(() => { undoStack.value = []; }, 10000);
-    try { (window as any).toastr?.success('操作完成'); } catch { /* noop */ }
   }
 }
 
@@ -792,7 +791,6 @@ function performUndo() {
   } else {
     if (undoTimer) { clearTimeout(undoTimer); undoTimer = null; }
   }
-  try { (window as any).toastr?.info('已撤销操作'); } catch { /* noop */ }
 }
 
 const lordHpPct = computed(() => {
