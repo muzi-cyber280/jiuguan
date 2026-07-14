@@ -104,6 +104,10 @@
                       "default": "物理",
                       "type": "string"
                     },
+                    "等级": {
+                      "default": 1,
+                      "type": "number"
+                    },
                     "伤害值": {
                       "default": 0,
                       "type": "number"
@@ -310,6 +314,10 @@
           "状态": {
             "default": "闯入中",
             "type": "string"
+          },
+          "逃跑次数": {
+            "default": 0,
+            "type": "number"
           }
         }
       }
@@ -377,13 +385,6 @@
             "type": "string"
           }
         }
-      }
-    },
-    "事件日志": {
-      "default": [],
-      "type": "array",
-      "items": {
-        "type": "string"
       }
     },
     "NPC": {

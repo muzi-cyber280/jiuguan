@@ -36,6 +36,7 @@ const RawSchema = z.object({
                   z
                     .object({
                       类型: z.string().prefault('物理'),
+                      等级: z.coerce.number().transform(v => Math.max(1, Math.min(3, v))).prefault(1),
                       伤害值: z.coerce.number().prefault(0),
                       特殊效果: z.string().prefault('无'),
                       触发概率: z.coerce.number().transform(v => _.clamp(v, 0, 100)).prefault(50),
@@ -116,6 +117,7 @@ const RawSchema = z.object({
           意志上限: z.coerce.number().prefault(5),
           当前楼层: z.string().prefault('入口'),
           状态: z.string().prefault('闯入中'),
+          逃跑次数: z.coerce.number().prefault(0),
         })
         .prefault({}),
     )
@@ -153,8 +155,6 @@ const RawSchema = z.object({
         .prefault({}),
     )
     .prefault({}),
-
-  事件日志: z.array(z.string()).prefault([]),
 
   NPC: z
     .record(
