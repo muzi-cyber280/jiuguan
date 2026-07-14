@@ -7,7 +7,7 @@
           <strong>{{ store.data.地下城.城主.名号 }}</strong>
           <small>第{{ worldDay }}日 {{ timeString }} · 声望 {{ '★'.repeat(Math.floor(store.data.地下城.声望)) }}{{ '☆'.repeat(10 - Math.floor(store.data.地下城.声望)) }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0714d</span>
+        <span v-if="!collapsed" class="version-badge">V0714e</span>
       </div>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -771,7 +771,7 @@ function executeBuild(action: 'build' | 'convert', key: string, ...args: any[]) 
   if (anySuccess) {
     undoStack.value.push({ snapshot, prevInput, key });
     if (undoTimer) clearTimeout(undoTimer);
-    undoTimer = setTimeout(() => { undoStack.value = []; }, 20000);
+    undoTimer = setTimeout(() => { undoStack.value = []; }, 60000);
   }
 }
 
@@ -787,7 +787,7 @@ function performUndo() {
   } catch { /* noop */ }
   if (undoStack.value.length > 0) {
     if (undoTimer) clearTimeout(undoTimer);
-    undoTimer = setTimeout(() => { undoStack.value = []; }, 20000);
+    undoTimer = setTimeout(() => { undoStack.value = []; }, 60000);
   } else {
     if (undoTimer) { clearTimeout(undoTimer); undoTimer = null; }
   }
