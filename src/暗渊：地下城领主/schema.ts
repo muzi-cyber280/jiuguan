@@ -118,6 +118,8 @@ const RawSchema = z.object({
           当前楼层: z.string().prefault('入口'),
           状态: z.string().prefault('闯入中'),
           逃跑次数: z.coerce.number().prefault(0),
+          技能: z.array(z.string()).prefault([]),
+          装备: z.array(z.string()).prefault([]),
         })
         .prefault({}),
     )

@@ -318,6 +318,20 @@
           "逃跑次数": {
             "default": 0,
             "type": "number"
+          },
+          "技能": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "装备": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       }

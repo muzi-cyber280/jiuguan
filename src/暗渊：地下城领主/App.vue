@@ -7,7 +7,7 @@
           <strong>{{ store.data.地下城.城主.名号 }}</strong>
           <small>第{{ worldDay }}日 {{ timeString }} · 声望 {{ '★'.repeat(Math.floor(store.data.地下城.声望)) }}{{ '☆'.repeat(10 - Math.floor(store.data.地下城.声望)) }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0714e</span>
+        <span v-if="!collapsed" class="version-badge">V0714f</span>
       </div>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -266,6 +266,14 @@
             <div class="bar-shell"><div class="bar-fill wp" :style="{ width: wpPct(inv) + '%' }"></div><span>{{ inv.意志力 }} / {{ inv.意志上限 }} WP</span></div>
             <div class="stat-row">
               <span>ATK {{ inv.攻击力 }}</span><span>DEF {{ inv.防御力 }}</span><span class="loc">→ {{ inv.当前楼层 }}</span>
+            </div>
+            <div v-if="inv.技能 && inv.技能.length > 0" class="tag-section">
+              <span class="tag-label">技能</span>
+              <span v-for="(skill, si) in inv.技能" :key="si" class="tag inv-skill-tag">{{ skill }}</span>
+            </div>
+            <div v-if="inv.装备 && inv.装备.length > 0" class="tag-section">
+              <span class="tag-label">装备</span>
+              <span v-for="(gear, gi) in inv.装备" :key="gi" class="tag inv-gear-tag">{{ gear }}</span>
             </div>
           </template>
           <p v-else class="desc muted-desc">已逃离地下城，可能卷土重来并变得更强</p>
@@ -975,6 +983,7 @@ function testInjectInvader() {
     性别: Math.random() > 0.5 ? '男' : '女', 种族: '人类', 职业: '战士', 等级: lv,
     生命值: lv * 10, 生命上限: lv * 10, 攻击力: lv * 2, 防御力: lv,
     意志力: lv * 5, 意志上限: lv * 5, 当前楼层: '入口大厅', 状态: '闯入中',
+    技能: ['格挡强化'], 装备: ['铁剑', '皮甲'],
   });
   store.data.当前场景.正在闯入.push(id);
 }
@@ -1210,6 +1219,8 @@ function testClearAllEntities() {
 .lv-tag { border-color: var(--gold); color: var(--gold); font-weight: bold; }
 
 .mark-tag { border-color: var(--blood); color: var(--blood); background: rgba(196, 30, 58, 0.1); }
+.inv-skill-tag { border-color: #4a7fb0; color: #6aafff; }
+.inv-gear-tag { border-color: var(--gold); color: var(--gold); }
 
 .data-grid { display: grid; grid-template-columns: auto 1fr; gap: 5px 12px; font-size: 12px; margin: 6px 0; }
 .data-grid span { color: var(--muted); }
