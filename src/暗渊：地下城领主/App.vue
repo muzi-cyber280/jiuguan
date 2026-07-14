@@ -7,7 +7,7 @@
           <strong>{{ store.data.地下城.城主.名号 }}</strong>
           <small>第{{ worldDay }}日 {{ timeString }} · 声望 {{ '★'.repeat(Math.floor(store.data.地下城.声望)) }}{{ '☆'.repeat(10 - Math.floor(store.data.地下城.声望)) }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0714</span>
+        <span v-if="!collapsed" class="version-badge">V0714a</span>
       </div>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -98,25 +98,36 @@
           <div class="build-group">
             <div class="build-label">全局</div>
             <div class="build-buttons">
-              <button class="build-btn" type="button" :disabled="楼层数 >= 10 || !checkResource(挖掘楼层魔晶, 0, 0)" @click="executeBuild('build', exec挖掘楼层)">挖掘楼层<small>{{ 挖掘楼层魔晶 }}魔晶</small></button>
-              <button class="build-btn" type="button" :disabled="store.data.地下城.城主.魅惑等级 >= 10 || !checkResource(0, 魅惑升级碎片, 0)" @click="executeBuild('build', exec升级魅惑)">升级魅惑<small>{{ 魅惑升级碎片 }}碎片</small></button>
-              <button class="build-btn" type="button" :disabled="!checkResource(魔力上限升级魔晶, 魔力上限升级碎片, 0)" @click="executeBuild('build', exec魔力上限)">魔力上限<small>{{ fmtCost(魔力上限升级魔晶, 魔力上限升级碎片) }}</small></button>
-              <button class="build-btn" type="button" :disabled="魔力已满 || store.data.地下城.资源.魔晶 < 恢复魔力魔晶" @click="executeBuild('build', exec恢复魔力)">恢复魔力<small>{{ 魔力已满 ? '已满' : `${恢复魔力魔晶}魔晶` }}</small></button>
+              <button class="build-btn" type="button" :disabled="楼层数 >= 10 || !checkResource(挖掘楼层魔晶, 0, 0)" @click="executeBuild('build', '挖掘楼层', exec挖掘楼层)">挖掘楼层<small>{{ 挖掘楼层魔晶 }}魔晶</small></button>
+              <button v-if="lastUndo?.key === '挖掘楼层'" class="undo-btn" type="button" @click="performUndo">撤销</button>
+              <button class="build-btn" type="button" :disabled="store.data.地下城.城主.魅惑等级 >= 10 || !checkResource(0, 魅惑升级碎片, 0)" @click="executeBuild('build', '升级魅惑', exec升级魅惑)">升级魅惑<small>{{ 魅惑升级碎片 }}碎片</small></button>
+              <button v-if="lastUndo?.key === '升级魅惑'" class="undo-btn" type="button" @click="performUndo">撤销</button>
+              <button class="build-btn" type="button" :disabled="!checkResource(魔力上限升级魔晶, 魔力上限升级碎片, 0)" @click="executeBuild('build', '魔力上限', exec魔力上限)">魔力上限<small>{{ fmtCost(魔力上限升级魔晶, 魔力上限升级碎片) }}</small></button>
+              <button v-if="lastUndo?.key === '魔力上限'" class="undo-btn" type="button" @click="performUndo">撤销</button>
+              <button class="build-btn" type="button" :disabled="魔力已满 || store.data.地下城.资源.魔晶 < 恢复魔力魔晶" @click="executeBuild('build', '恢复魔力', exec恢复魔力)">恢复魔力<small>{{ 魔力已满 ? '已满' : `${恢复魔力魔晶}魔晶` }}</small></button>
+              <button v-if="lastUndo?.key === '恢复魔力'" class="undo-btn" type="button" @click="performUndo">撤销</button>
             </div>
           </div>
           <div class="build-group">
             <div class="build-label">转化</div>
             <div class="build-buttons">
-              <button class="build-btn" type="button" :disabled="store.data.地下城.资源.灵魂碎片 < 1" @click="executeBuild('build', () => exec转化('碎片换魔晶', 1))">碎片换魔晶<small>1碎片→5魔晶</small></button>
-              <button class="build-btn" type="button" :disabled="store.data.地下城.资源.灵魂碎片 < 1" @click="executeBuild('build', () => exec转化('碎片换魔素', 1))">碎片换魔素<small>1碎片→10魔素</small></button>
-              <button class="build-btn" type="button" :disabled="store.data.地下城.资源.魔晶 < 8" @click="executeBuild('build', () => exec转化('魔晶换碎片', 1))">魔晶换碎片<small>8魔晶→1碎片</small></button>
-              <button class="build-btn" type="button" :disabled="store.data.地下城.资源.魔晶 < 1" @click="executeBuild('build', () => exec转化('魔晶换魔素', 1))">魔晶换魔素<small>1魔晶→2魔素</small></button>
+              <button class="build-btn" type="button" :disabled="store.data.地下城.资源.灵魂碎片 < 1" @click="executeBuild('build', '转化:碎片换魔晶', () => exec转化('碎片换魔晶', 1))">碎片换魔晶<small>1碎片→5魔晶</small></button>
+              <button v-if="lastUndo?.key === '转化:碎片换魔晶'" class="undo-btn" type="button" @click="performUndo">撤销</button>
+              <button class="build-btn" type="button" :disabled="store.data.地下城.资源.灵魂碎片 < 1" @click="executeBuild('build', '转化:碎片换魔素', () => exec转化('碎片换魔素', 1))">碎片换魔素<small>1碎片→10魔素</small></button>
+              <button v-if="lastUndo?.key === '转化:碎片换魔素'" class="undo-btn" type="button" @click="performUndo">撤销</button>
+              <button class="build-btn" type="button" :disabled="store.data.地下城.资源.魔晶 < 8" @click="executeBuild('build', '转化:魔晶换碎片', () => exec转化('魔晶换碎片', 1))">魔晶换碎片<small>8魔晶→1碎片</small></button>
+              <button v-if="lastUndo?.key === '转化:魔晶换碎片'" class="undo-btn" type="button" @click="performUndo">撤销</button>
+              <button class="build-btn" type="button" :disabled="store.data.地下城.资源.魔晶 < 1" @click="executeBuild('build', '转化:魔晶换魔素', () => exec转化('魔晶换魔素', 1))">魔晶换魔素<small>1魔晶→2魔素</small></button>
+              <button v-if="lastUndo?.key === '转化:魔晶换魔素'" class="undo-btn" type="button" @click="performUndo">撤销</button>
             </div>
           </div>
           <div class="build-group">
             <div class="build-label">设施</div>
             <div class="build-buttons">
-              <button v-for="fac in 设施建设列表" :key="fac.名" class="build-btn" type="button" :disabled="!checkResource(fac.费用.魔晶, fac.费用.碎片, 0)" @click="executeBuild('build', () => exec建造设施(fac.名))">{{ fac.名 }}<small>{{ fmtCost(fac.费用.魔晶, fac.费用.碎片) }}</small></button>
+              <template v-for="fac in 设施建设列表" :key="fac.名">
+                <button class="build-btn" type="button" :disabled="!checkResource(fac.费用.魔晶, fac.费用.碎片, 0)" @click="executeBuild('build', '设施:' + fac.名, () => exec建造设施(fac.名))">{{ fac.名 }}<small>{{ fmtCost(fac.费用.魔晶, fac.费用.碎片) }}</small></button>
+                <button v-if="lastUndo?.key === '设施:' + fac.名" class="undo-btn" type="button" @click="performUndo">撤销</button>
+              </template>
             </div>
           </div>
         </div>
@@ -161,31 +172,44 @@
                 <p>{{ mob.描述 }}</p>
               </div>
               <div class="mob-detail-actions">
-                <button class="build-btn xs" type="button" :disabled="mob.等级 >= 20 || !checkResource(mob.等级 * 3, 0, 0)" @click="executeBuild('build', () => exec升级魔物(name, mn))">升级→Lv{{ mob.等级 + 1 }}<small>{{ mob.等级 * 3 }}魔晶</small></button>
-                <button v-if="(mob.档位 || '普通') === '普通' && mob.等级 >= 4" class="build-btn xs evolve-btn" type="button" :disabled="!checkResource(0, 2, 0)" @click="executeBuild('build', () => exec进化魔物(name, mn))">进化<small>2碎片</small></button>
-                <button v-if="mob.档位 === '精英' && mob.等级 >= 10" class="build-btn xs advance-btn" type="button" :disabled="!checkResource(0, 5, 0)" @click="executeBuild('build', () => exec进阶魔物(name, mn))">进阶<small>5碎片</small></button>
+                <button class="build-btn xs" type="button" :disabled="mob.等级 >= 20 || !checkResource(mob.等级 * 3, 0, 0)" @click="executeBuild('build', '升级魔物:' + name + ':' + mn, () => exec升级魔物(name, mn))">升级→Lv{{ mob.等级 + 1 }}<small>{{ mob.等级 * 3 }}魔晶</small></button>
+                <button v-if="lastUndo?.key === '升级魔物:' + name + ':' + mn" class="undo-btn xs" type="button" @click="performUndo">撤销</button>
+                <button v-if="(mob.档位 || '普通') === '普通' && mob.等级 >= 4" class="build-btn xs evolve-btn" type="button" :disabled="!checkResource(0, 2, 0)" @click="executeBuild('build', '进化:' + name + ':' + mn, () => exec进化魔物(name, mn))">进化<small>2碎片</small></button>
+                <button v-if="(mob.档位 || '普通') === '普通' && mob.等级 >= 4 && lastUndo?.key === '进化:' + name + ':' + mn" class="undo-btn xs" type="button" @click="performUndo">撤销</button>
+                <button v-if="mob.档位 === '精英' && mob.等级 >= 10" class="build-btn xs advance-btn" type="button" :disabled="!checkResource(0, 5, 0)" @click="executeBuild('build', '进阶:' + name + ':' + mn, () => exec进阶魔物(name, mn))">进阶<small>5碎片</small></button>
+                <button v-if="mob.档位 === '精英' && mob.等级 >= 10 && lastUndo?.key === '进阶:' + name + ':' + mn" class="undo-btn xs" type="button" @click="performUndo">撤销</button>
               </div>
             </div>
           </template>
           <div class="floor-actions">
-            <button class="build-btn sm" type="button" :disabled="floor.防御力 >= store.data.地下城.声望 * 5 || !checkResource(强化防御魔晶(floor.防御力), 0, 0)" @click="executeBuild('build', () => exec强化防御(name, floor.防御力))">强化防御<small>{{ 强化防御魔晶(floor.防御力) }}魔晶</small></button>
+            <button class="build-btn sm" type="button" :disabled="floor.防御力 >= store.data.地下城.声望 * 5 || !checkResource(强化防御魔晶(floor.防御力), 0, 0)" @click="executeBuild('build', '防御:' + name, () => exec强化防御(name, floor.防御力))">强化防御<small>{{ 强化防御魔晶(floor.防御力) }}魔晶</small></button>
+            <button v-if="lastUndo?.key === '防御:' + name" class="undo-btn sm" type="button" @click="performUndo">撤销</button>
             <button class="build-btn sm" type="button" @click="trapMenuFloor = trapMenuFloor === name ? null : name; mobMenuFloor = null; mobUpgradeFloor = null">布置陷阱<small>10魔晶起</small></button>
             <button class="build-btn sm" type="button" @click="mobMenuFloor = mobMenuFloor === name ? null : name; trapMenuFloor = null; mobUpgradeFloor = mobUpgradeFloor === name ? null : name">召唤魔物<small>10魔晶起</small></button>
           </div>
           <div v-if="trapMenuFloor === name" class="sub-menu trap-tier-menu">
             <div v-for="(c, t) in 陷阱费用表" :key="t" class="trap-tier-row">
               <span class="trap-tier-label">{{ t.replace('陷阱', '') }}</span>
-              <button v-for="tier in [1, 2, 3]" :key="tier" class="build-btn xs" type="button" :disabled="!checkResource(c.魔晶 * tier, c.碎片 * tier, 0, c.魔素 * tier)" @click="executeBuild('build', () => exec布置陷阱(name, t, tier)); trapMenuFloor = null">{{ ['Ⅰ','Ⅱ','Ⅲ'][tier - 1] }}<small>{{ fmtCostFull(c.魔晶 * tier, c.碎片 * tier, c.魔素 * tier) }}</small></button>
+              <template v-for="tier in [1, 2, 3]" :key="tier">
+                <button class="build-btn xs" type="button" :disabled="!checkResource(c.魔晶 * tier, c.碎片 * tier, 0, c.魔素 * tier)" @click="executeBuild('build', '陷阱:' + name + ':' + t + ':' + tier, () => exec布置陷阱(name, t, tier))">{{ ['Ⅰ','Ⅱ','Ⅲ'][tier - 1] }}<small>{{ fmtCostFull(c.魔晶 * tier, c.碎片 * tier, c.魔素 * tier) }}</small></button>
+                <button v-if="lastUndo?.key === '陷阱:' + name + ':' + t + ':' + tier" class="undo-btn xs" type="button" @click="performUndo">撤销</button>
+              </template>
             </div>
           </div>
           <div v-if="mobMenuFloor === name" class="sub-menu">
-            <button v-for="(c, t) in 魔物费用表" :key="t" class="build-btn xs" type="button" :disabled="!checkResource(c.魔晶, c.碎片, 0)" @click="executeBuild('build', () => exec召唤魔物(name, t)); mobMenuFloor = null">{{ t }}<small>{{ fmtCost(c.魔晶, c.碎片) }}</small></button>
+            <template v-for="(c, t) in 魔物费用表" :key="t">
+              <button class="build-btn xs" type="button" :disabled="!checkResource(c.魔晶, c.碎片, 0)" @click="executeBuild('build', '魔物:' + name + ':' + t, () => exec召唤魔物(name, t))">{{ t }}<small>{{ fmtCost(c.魔晶, c.碎片) }}</small></button>
+              <button v-if="lastUndo?.key === '魔物:' + name + ':' + t" class="undo-btn xs" type="button" @click="performUndo">撤销</button>
+            </template>
           </div>
           <div v-if="mobUpgradeFloor === name && !_.isEmpty(floor.驻守魔物)" class="sub-menu">
             <template v-for="(mob, mn) in floor.驻守魔物" :key="mn">
-              <button class="build-btn xs" type="button" :disabled="mob.等级 >= 20 || !checkResource(mob.等级 * 3, 0, 0)" @click="executeBuild('build', () => exec升级魔物(name, mn))">{{ mn }} {{ mob.档位 && mob.档位 !== '普通' ? `[${mob.档位}]` : '' }} Lv{{ mob.等级 }}→{{ mob.等级 + 1 }}<small>{{ mob.等级 * 3 }}魔晶</small></button>
-              <button v-if="(mob.档位 || '普通') === '普通' && mob.等级 >= 4" class="build-btn xs evolve-btn" type="button" :disabled="!checkResource(0, 2, 0)" @click="executeBuild('build', () => exec进化魔物(name, mn))">{{ mn }} 进化<small>2碎片</small></button>
-              <button v-if="mob.档位 === '精英' && mob.等级 >= 10" class="build-btn xs advance-btn" type="button" :disabled="!checkResource(0, 5, 0)" @click="executeBuild('build', () => exec进阶魔物(name, mn))">{{ mn }} 进阶<small>5碎片</small></button>
+              <button class="build-btn xs" type="button" :disabled="mob.等级 >= 20 || !checkResource(mob.等级 * 3, 0, 0)" @click="executeBuild('build', '升级魔物:' + name + ':' + mn, () => exec升级魔物(name, mn))">{{ mn }} {{ mob.档位 && mob.档位 !== '普通' ? `[${mob.档位}]` : '' }} Lv{{ mob.等级 }}→{{ mob.等级 + 1 }}<small>{{ mob.等级 * 3 }}魔晶</small></button>
+              <button v-if="lastUndo?.key === '升级魔物:' + name + ':' + mn" class="undo-btn xs" type="button" @click="performUndo">撤销</button>
+              <button v-if="(mob.档位 || '普通') === '普通' && mob.等级 >= 4" class="build-btn xs evolve-btn" type="button" :disabled="!checkResource(0, 2, 0)" @click="executeBuild('build', '进化:' + name + ':' + mn, () => exec进化魔物(name, mn))">{{ mn }} 进化<small>2碎片</small></button>
+              <button v-if="(mob.档位 || '普通') === '普通' && mob.等级 >= 4 && lastUndo?.key === '进化:' + name + ':' + mn" class="undo-btn xs" type="button" @click="performUndo">撤销</button>
+              <button v-if="mob.档位 === '精英' && mob.等级 >= 10" class="build-btn xs advance-btn" type="button" :disabled="!checkResource(0, 5, 0)" @click="executeBuild('build', '进阶:' + name + ':' + mn, () => exec进阶魔物(name, mn))">{{ mn }} 进阶<small>5碎片</small></button>
+              <button v-if="mob.档位 === '精英' && mob.等级 >= 10 && lastUndo?.key === '进阶:' + name + ':' + mn" class="undo-btn xs" type="button" @click="performUndo">撤销</button>
             </template>
           </div>
         </div>
@@ -222,7 +246,8 @@
             <span>状态</span><strong>{{ npc.状态 }}</strong>
           </div>
           <div class="floor-actions">
-            <button class="build-btn sm" type="button" :disabled="npc.等级 >= 20 || !checkResource(npc.等级 * 5, 1, 0)" @click="executeBuild('build', () => exec升级NPC(name)); npcUpgradeMenu = null">升级<small>{{ npc.等级 * 5 }}魔晶+1碎片</small></button>
+            <button class="build-btn sm" type="button" :disabled="npc.等级 >= 20 || !checkResource(npc.等级 * 5, 1, 0)" @click="executeBuild('build', 'NPC:' + name, () => exec升级NPC(name))">升级<small>{{ npc.等级 * 5 }}魔晶+1碎片</small></button>
+            <button v-if="lastUndo?.key === 'NPC:' + name" class="undo-btn sm" type="button" @click="performUndo">撤销</button>
           </div>
           <p v-if="npc.备注" class="desc muted-desc">{{ npc.备注 }}</p>
         </div>
@@ -235,7 +260,7 @@
             <strong>{{ name }}</strong>
             <span class="status-tag" :class="invStatusClass(inv.状态)">{{ inv.状态 }}</span>
           </div>
-          <p class="desc muted-desc">{{ inv.性别 }} · {{ inv.种族 }} · {{ inv.职业 }} · Lv{{ inv.等级 }}<span v-if="inv.逃跑次数 > 0"> · 逃跑{{ inv.逃跑次数 }}次</span></p>
+          <p class="desc muted-desc">{{ inv.性别 }} · {{ inv.种族 }} · {{ inv.职业 }} · Lv{{ inv.等级 }} · 逃跑{{ inv.逃跑次数 ?? 0 }}次</p>
           <template v-if="inv.状态 !== '撤退'">
             <div class="bar-shell"><div class="bar-fill hp" :style="{ width: hpPct(inv) + '%' }"></div><span>{{ inv.生命值 }} / {{ inv.生命上限 }} HP</span></div>
             <div class="bar-shell"><div class="bar-fill wp" :style="{ width: wpPct(inv) + '%' }"></div><span>{{ inv.意志力 }} / {{ inv.意志上限 }} WP</span></div>
@@ -268,7 +293,8 @@
           </div>
           <p v-if="cap.外貌" class="desc">{{ cap.外貌 }}</p>
           <div v-if="cap.服从度 >= 100" class="captive-actions">
-            <button class="build-btn sm convert-btn" type="button" @click="executeBuild('convert', name, cap)">转化为暗堕随从</button>
+            <button class="build-btn sm convert-btn" type="button" @click="executeBuild('convert', '转化暗堕:' + name, name, cap)">转化为暗堕随从</button>
+            <button v-if="lastUndo?.key === '转化暗堕:' + name" class="undo-btn sm" type="button" @click="performUndo">撤销</button>
           </div>
         </div>
       </section>
@@ -373,7 +399,8 @@
             <div v-for="(row, i) in 费用预览表" :key="i" class="test-cost-row" :class="{ disabled: row.禁用 }">
               <span>{{ row.项目 }}</span>
               <span class="cost-val">{{ row.费用 }}</span>
-              <button class="test-btn sm" type="button" :disabled="row.禁用" @click="executeBuild('build', row.执行)">执行</button>
+              <button class="test-btn sm" type="button" :disabled="row.禁用" @click="executeBuild('build', 'test:' + row.项目, row.执行)">执行</button>
+              <button v-if="lastUndo?.key === 'test:' + row.项目" class="undo-btn sm" type="button" @click="performUndo">撤销</button>
             </div>
           </div>
         </div>
@@ -493,6 +520,8 @@ const trapMenuFloor = ref<string | null>(null);
 const mobMenuFloor = ref<string | null>(null);
 const mobUpgradeFloor = ref<string | null>(null);
 const npcUpgradeMenu = ref<string | null>(null);
+const lastUndo = ref<{ snapshot: any; prevInput: string; key: string } | null>(null);
+let undoTimer: ReturnType<typeof setTimeout> | null = null;
 
 function checkResource(魔晶: number, 碎片: number, 魔力: number, 魔素 = 0): boolean {
   return store.data.地下城.资源.魔晶 >= 魔晶
@@ -718,7 +747,7 @@ function exec转化暗堕(name: string, cap: any): BuildResult {
   return { 成功: true, 描述: `${name}转化为暗堕随从(Lv${lv} HP${lv * 10}/ATK${lv * 2}/DEF${Math.floor(lv * 1.5)}/${类型})` };
 }
 
-function executeBuild(action: 'build' | 'convert', ...args: any[]) {
+function executeBuild(action: 'build' | 'convert', key: string, ...args: any[]) {
   const snapshot = _.cloneDeep(store.data);
   let prevInput = '';
   try { const $p = window.parent?.$ || window.$; prevInput = $p?.('#send_textarea')?.val() || ''; } catch { /* noop */ }
@@ -739,24 +768,24 @@ function executeBuild(action: 'build' | 'convert', ...args: any[]) {
   nextTick(() => fillRawInput(textToSend));
 
   if (anySuccess) {
-    try {
-      (window as any).toastr?.success('操作完成，10秒内可撤销', '', {
-        timeOut: 10000,
-        extendedTimeOut: 5000,
-        closeButton: true,
-        onclick: () => undoBuild(snapshot, prevInput),
-      });
-    } catch { /* noop */ }
+    lastUndo.value = { snapshot, prevInput, key };
+    if (undoTimer) clearTimeout(undoTimer);
+    undoTimer = setTimeout(() => { lastUndo.value = null; }, 10000);
+    try { (window as any).toastr?.success('操作完成'); } catch { /* noop */ }
   }
 }
 
-function undoBuild(snapshot: any, prevInput: string) {
+function performUndo() {
+  if (!lastUndo.value) return;
+  const { snapshot, prevInput } = lastUndo.value;
   const keys = Object.keys(store.data);
   keys.forEach(k => { (store.data as any)[k] = snapshot[k]; });
   try {
     const $p = window.parent?.$ || window.$;
     $p?.('#send_textarea')?.val(prevInput)?.trigger('input');
   } catch { /* noop */ }
+  lastUndo.value = null;
+  if (undoTimer) { clearTimeout(undoTimer); undoTimer = null; }
   try { (window as any).toastr?.info('已撤销操作'); } catch { /* noop */ }
 }
 
@@ -1213,6 +1242,11 @@ function testClearAllEntities() {
 .build-btn.xs small { font-size: 8px; }
 .build-btn.evolve-btn { border-color: #7a5aba; background: rgba(122,90,186,0.15); }
 .build-btn.advance-btn { border-color: #ba5a5a; background: rgba(186,90,90,0.15); }
+.undo-btn { display: inline-flex; align-items: center; padding: 5px 9px; border: 1px solid var(--danger); border-radius: 7px; background: rgba(192, 100, 85, 0.16); color: var(--danger); cursor: pointer; font-size: 12px; font-weight: 700; transition: 0.18s ease; animation: undo-flash 0.3s ease; }
+.undo-btn:hover { background: rgba(192, 100, 85, 0.3); }
+.undo-btn.sm { padding: 3px 7px; font-size: 11px; }
+.undo-btn.xs { padding: 2px 6px; font-size: 10px; }
+@keyframes undo-flash { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 .floor-actions { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--subtle-line); }
 .sub-menu { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; padding-left: 4px; }
 
