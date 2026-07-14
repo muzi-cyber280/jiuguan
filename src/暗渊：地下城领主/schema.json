@@ -189,15 +189,15 @@
           "type": "object",
           "properties": {
             "魔晶": {
-              "default": 60,
+              "default": 100,
               "type": "number"
             },
             "灵魂碎片": {
-              "default": 5,
+              "default": 8,
               "type": "number"
             },
             "魔素": {
-              "default": 30,
+              "default": 40,
               "type": "number"
             }
           }

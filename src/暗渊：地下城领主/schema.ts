@@ -70,9 +70,9 @@ const RawSchema = z.object({
         .prefault({}),
       资源: z
         .object({
-          魔晶: z.coerce.number().prefault(60),
-          灵魂碎片: z.coerce.number().prefault(5),
-          魔素: z.coerce.number().prefault(30),
+          魔晶: z.coerce.number().prefault(100),
+          灵魂碎片: z.coerce.number().prefault(8),
+          魔素: z.coerce.number().prefault(40),
         })
         .prefault({}),
       声望: z.coerce.number().transform(v => _.clamp(v, 0, 10)).prefault(1),
