@@ -7,7 +7,7 @@
           <strong>{{ store.data.地下城.城主.名号 }}</strong>
           <small>第{{ worldDay }}日 {{ timeString }} · 声望 {{ '★'.repeat(Math.floor(store.data.地下城.声望)) }}{{ '☆'.repeat(10 - Math.floor(store.data.地下城.声望)) }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0714a</span>
+        <span v-if="!collapsed" class="version-badge">V0714b</span>
       </div>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -520,7 +520,8 @@ const trapMenuFloor = ref<string | null>(null);
 const mobMenuFloor = ref<string | null>(null);
 const mobUpgradeFloor = ref<string | null>(null);
 const npcUpgradeMenu = ref<string | null>(null);
-const lastUndo = ref<{ snapshot: any; prevInput: string; key: string } | null>(null);
+const undoStack = ref<{ snapshot: any; prevInput: string; key: string }[]>([]);
+const lastUndo = computed(() => undoStack.value.length > 0 ? undoStack.value[undoStack.value.length - 1] : null);
 let undoTimer: ReturnType<typeof setTimeout> | null = null;
 
 function checkResource(魔晶: number, 碎片: number, 魔力: number, 魔素 = 0): boolean {
@@ -768,24 +769,29 @@ function executeBuild(action: 'build' | 'convert', key: string, ...args: any[]) 
   nextTick(() => fillRawInput(textToSend));
 
   if (anySuccess) {
-    lastUndo.value = { snapshot, prevInput, key };
+    undoStack.value.push({ snapshot, prevInput, key });
     if (undoTimer) clearTimeout(undoTimer);
-    undoTimer = setTimeout(() => { lastUndo.value = null; }, 10000);
+    undoTimer = setTimeout(() => { undoStack.value = []; }, 10000);
     try { (window as any).toastr?.success('操作完成'); } catch { /* noop */ }
   }
 }
 
 function performUndo() {
-  if (!lastUndo.value) return;
-  const { snapshot, prevInput } = lastUndo.value;
+  const item = undoStack.value.pop();
+  if (!item) return;
+  const { snapshot, prevInput } = item;
   const keys = Object.keys(store.data);
   keys.forEach(k => { (store.data as any)[k] = snapshot[k]; });
   try {
     const $p = window.parent?.$ || window.$;
     $p?.('#send_textarea')?.val(prevInput)?.trigger('input');
   } catch { /* noop */ }
-  lastUndo.value = null;
-  if (undoTimer) { clearTimeout(undoTimer); undoTimer = null; }
+  if (undoStack.value.length > 0) {
+    if (undoTimer) clearTimeout(undoTimer);
+    undoTimer = setTimeout(() => { undoStack.value = []; }, 10000);
+  } else {
+    if (undoTimer) { clearTimeout(undoTimer); undoTimer = null; }
+  }
   try { (window as any).toastr?.info('已撤销操作'); } catch { /* noop */ }
 }
 
