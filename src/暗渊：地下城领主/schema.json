@@ -307,7 +307,7 @@
             "default": 5,
             "type": "number"
           },
-          "当前楼层": {
+          "当前位置": {
             "default": "入口",
             "type": "string"
           },
@@ -332,6 +332,10 @@
             "items": {
               "type": "string"
             }
+          },
+          "备注": {
+            "default": "",
+            "type": "string"
           }
         }
       }
@@ -371,7 +375,7 @@
             "default": 20,
             "type": "number"
           },
-          "心理状态": {
+          "状态": {
             "default": "抗拒",
             "type": "string"
           },
@@ -412,13 +416,21 @@
         "default": {},
         "type": "object",
         "properties": {
+          "性别": {
+            "default": "女",
+            "type": "string"
+          },
+          "种族": {
+            "default": "人类",
+            "type": "string"
+          },
+          "职业": {
+            "default": "战士",
+            "type": "string"
+          },
           "在场": {
             "default": false,
             "type": "boolean"
-          },
-          "所在区域": {
-            "default": "地下城",
-            "type": "string"
           },
           "当前位置": {
             "default": "王座之间",
@@ -434,10 +446,6 @@
           },
           "态度": {
             "default": "忠诚",
-            "type": "string"
-          },
-          "备注": {
-            "default": "",
             "type": "string"
           },
           "等级": {
@@ -462,6 +470,54 @@
           },
           "类型": {
             "default": "辅助",
+            "type": "string"
+          },
+          "技能": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "装备": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "魔物化": {
+            "default": false,
+            "type": "boolean"
+          },
+          "融合次数": {
+            "default": 0,
+            "type": "number"
+          },
+          "融合特征": {
+            "default": "",
+            "type": "string"
+          },
+          "融合种族": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "融合能力": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "外貌": {
+            "default": "",
+            "type": "string"
+          },
+          "备注": {
+            "default": "",
             "type": "string"
           }
         }

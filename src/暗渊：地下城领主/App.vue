@@ -7,7 +7,7 @@
           <strong>{{ store.data.地下城.城主.名号 }}</strong>
           <small>第{{ worldDay }}日 {{ timeString }} · 声望 {{ '★'.repeat(Math.floor(store.data.地下城.声望)) }}{{ '☆'.repeat(10 - Math.floor(store.data.地下城.声望)) }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0714f</span>
+        <span v-if="!collapsed" class="version-badge">V0714g</span>
       </div>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -245,9 +245,44 @@
             <span>位置</span><strong>{{ npc.当前位置 }}</strong>
             <span>状态</span><strong>{{ npc.状态 }}</strong>
           </div>
+          <div v-if="npc.魔物化" class="fusion-info">
+            <div class="fusion-badge">魔物化 {{ npc.融合次数 }}/3</div>
+            <div v-if="npc.融合特征" class="tag-section">
+              <span class="tag-label">特征</span>
+              <span class="tag fusion-trait-tag">{{ npc.融合特征 }}</span>
+            </div>
+            <div v-if="npc.融合种族 && npc.融合种族.length > 0" class="tag-section">
+              <span class="tag-label">血统</span>
+              <span v-for="(r, ri) in npc.融合种族" :key="ri" class="tag fusion-race-tag">{{ r }}</span>
+            </div>
+            <div v-if="npc.融合能力 && npc.融合能力.length > 0" class="tag-section">
+              <span class="tag-label">能力</span>
+              <span v-for="(a, ai) in npc.融合能力" :key="ai" class="tag fusion-skill-tag">{{ a }}</span>
+            </div>
+            <div v-if="npc.技能 && npc.技能.length > 0" class="tag-section">
+              <span class="tag-label">技能</span>
+              <span v-for="(s, si) in npc.技能" :key="si" class="tag inv-skill-tag">{{ s }}</span>
+            </div>
+            <div v-if="npc.装备 && npc.装备.length > 0" class="tag-section">
+              <span class="tag-label">装备</span>
+              <span v-for="(g, gi) in npc.装备" :key="gi" class="tag inv-gear-tag">{{ g }}</span>
+            </div>
+          </div>
+          <p v-if="npc.外貌" class="desc">{{ npc.外貌 }}</p>
           <div class="floor-actions">
             <button class="build-btn sm" type="button" :disabled="npc.等级 >= 20 || !checkResource(npc.等级 * 5, 1, 0)" @click="executeBuild('build', 'NPC:' + name, () => exec升级NPC(name))">升级<small>{{ npc.等级 * 5 }}魔晶+1碎片</small></button>
             <button v-if="lastUndo?.key === 'NPC:' + name" class="undo-btn sm" type="button" @click="performUndo">撤销</button>
+            <button v-if="hasAltar && npc.魔物化 && npc.融合次数 < 3" class="build-btn sm fuse-btn" type="button" @click="fuseTargetNPC = fuseTargetNPC === name ? null : name">融合({{ npc.融合次数 }}/3)</button>
+            <button v-if="hasAltar && !npc.魔物化 && npc.融合次数 < 3" class="build-btn sm fuse-btn" type="button" @click="fuseTargetNPC = fuseTargetNPC === name ? null : name">融合</button>
+          </div>
+          <div v-if="fuseTargetNPC === name && !_.isEmpty(allMobs)" class="sub-menu fuse-menu">
+            <div class="fuse-hint">选择魔物继续融合（消耗15魔晶+3碎片，第{{ (npc.融合次数 ?? 0) + 1 }}次）</div>
+            <template v-for="m in allMobs" :key="m.floor + ':' + m.name">
+              <button class="build-btn xs" type="button" :disabled="!checkResource(15, 3, 0)" @click="executeBuild('fuse', '融合:' + name, () => exec融合NPC(name, npc, m.floor, m.name))">{{ m.name }}<small>{{ m.档位 }} Lv{{ m.等级 }} @{{ m.floor }}</small></button>
+            </template>
+          </div>
+          <div v-else-if="fuseTargetNPC === name && _.isEmpty(allMobs)" class="sub-menu fuse-menu">
+            <div class="fuse-hint">暂无可融合的魔物，请先召唤魔物到楼层</div>
           </div>
           <p v-if="npc.备注" class="desc muted-desc">{{ npc.备注 }}</p>
         </div>
@@ -265,7 +300,7 @@
             <div class="bar-shell"><div class="bar-fill hp" :style="{ width: hpPct(inv) + '%' }"></div><span>{{ inv.生命值 }} / {{ inv.生命上限 }} HP</span></div>
             <div class="bar-shell"><div class="bar-fill wp" :style="{ width: wpPct(inv) + '%' }"></div><span>{{ inv.意志力 }} / {{ inv.意志上限 }} WP</span></div>
             <div class="stat-row">
-              <span>ATK {{ inv.攻击力 }}</span><span>DEF {{ inv.防御力 }}</span><span class="loc">→ {{ inv.当前楼层 }}</span>
+              <span>ATK {{ inv.攻击力 }}</span><span>DEF {{ inv.防御力 }}</span><span class="loc">→ {{ inv.当前位置 }}</span>
             </div>
             <div v-if="inv.技能 && inv.技能.length > 0" class="tag-section">
               <span class="tag-label">技能</span>
@@ -291,7 +326,7 @@
           <div class="bar-shell"><div class="bar-fill obey" :style="{ width: cap.服从度 + '%' }"></div><span>服从 {{ cap.服从度 }}</span></div>
           <div class="bar-shell"><div class="bar-fill shame" :style="{ width: cap.羞耻度 + '%' }"></div><span>羞耻 {{ cap.羞耻度 }}</span></div>
           <div class="data-grid small">
-            <span>心理</span><strong>{{ cap.心理状态 }}</strong>
+            <span>状态</span><strong>{{ cap.状态 }}</strong>
             <span>位置</span><strong>{{ cap.当前位置 }}</strong>
             <span>身体</span><strong>{{ cap.身体状态 }}</strong>
           </div>
@@ -303,6 +338,19 @@
           <div v-if="cap.服从度 >= 100" class="captive-actions">
             <button class="build-btn sm convert-btn" type="button" @click="executeBuild('convert', '转化暗堕:' + name, name, cap)">转化为暗堕随从</button>
             <button v-if="lastUndo?.key === '转化暗堕:' + name" class="undo-btn sm" type="button" @click="performUndo">撤销</button>
+          </div>
+          <div v-if="hasAltar && cap.服从度 >= 30" class="captive-actions">
+            <button class="build-btn sm fuse-btn" type="button" @click="fuseTargetCaptive = fuseTargetCaptive === name ? null : name">融合炼金</button>
+            <button v-if="lastUndo?.key === '融合:' + name" class="undo-btn sm" type="button" @click="performUndo">撤销</button>
+          </div>
+          <div v-if="fuseTargetCaptive === name && !_.isEmpty(allMobs)" class="sub-menu fuse-menu">
+            <div class="fuse-hint">选择魔物进行融合（消耗15魔晶+3碎片，俘获者将转为部下）</div>
+            <template v-for="m in allMobs" :key="m.floor + ':' + m.name">
+              <button class="build-btn xs" type="button" :disabled="!checkResource(15, 3, 0)" @click="executeBuild('fuse', '融合:' + name, () => exec融合(name, cap, m.floor, m.name))">{{ m.name }}<small>{{ m.档位 }} Lv{{ m.等级 }} @{{ m.floor }}</small></button>
+            </template>
+          </div>
+          <div v-else-if="fuseTargetCaptive === name && _.isEmpty(allMobs)" class="sub-menu fuse-menu">
+            <div class="fuse-hint">暂无可融合的魔物，请先召唤魔物到楼层</div>
           </div>
         </div>
       </section>
@@ -749,14 +797,97 @@ function exec转化暗堕(name: string, cap: any): BuildResult {
   const lv = cap.等级 || 1;
   delete (store.data.俘获者 as any)[name];
   _.set(store.data.NPC, name, {
-    在场: true, 所在区域: '地下城', 当前位置: '王座之间', 状态: '空闲',
+    性别: cap.性别, 种族: cap.种族, 职业: cap.职业,
+    在场: true, 当前位置: '王座之间', 状态: '空闲',
     好感度: 100, 态度: '痴迷', 备注: `由俘获者转化而来，原职业${cap.职业}`,
     等级: lv, 生命值: lv * 10, 生命上限: lv * 10, 攻击力: lv * 2, 防御力: Math.floor(lv * 1.5), 类型,
+    技能: [], 装备: [], 魔物化: false, 融合次数: 0, 融合特征: '', 融合种族: [], 融合能力: [], 外貌: cap.外貌 ?? '',
   });
   return { 成功: true, 描述: `${name}转化为暗堕随从(Lv${lv} HP${lv * 10}/ATK${lv * 2}/DEF${Math.floor(lv * 1.5)}/${类型})` };
 }
 
-function executeBuild(action: 'build' | 'convert', key: string, ...args: any[]) {
+const 融合系数表 = [0.8, 0.6, 0.4];
+const 档位倍率: Record<string, number> = { 普通: 1, 精英: 1.2, 首领: 1.5 };
+
+function exec融合(captiveName: string, cap: any, floorName: string, mobName: string): BuildResult {
+  if (!store.data.俘获者[captiveName]) return { 成功: false, 描述: '俘获者不存在' };
+  const floor = store.data.地下城.楼层[floorName];
+  if (!floor) return { 成功: false, 描述: '楼层不存在' };
+  const mob = floor.驻守魔物[mobName];
+  if (!mob) return { 成功: false, 描述: '魔物不存在' };
+  if (!checkResource(15, 3, 0)) return { 成功: false, 描述: '融合资源不足(需15魔晶+3碎片)' };
+
+  deductResource(15, 3, 0);
+
+  const 次数 = cap.融合次数 ?? 0;
+  const 系数 = 融合系数表[次数] ?? 0.4;
+  const 倍率 = 档位倍率[mob.档位] ?? 1;
+
+  const newHp = Math.floor(mob.生命上限 * 系数 * 倍率);
+  const newAtk = Math.floor(mob.攻击力 * 系数 * 倍率);
+  const newDef = Math.floor(mob.防御力 * 系数 * 倍率);
+  const newLv = Math.max(cap.等级 ?? 1, mob.等级);
+
+  const 融合种族 = [...(cap.融合种族 ?? [])];
+  if (!融合种族.includes(mob.描述?.split(' ')[0] || '')) 融合种族.push(mob.特殊能力?.split('，')[0] || mob.档位);
+
+  _.set(store.data.NPC, captiveName, {
+    性别: cap.性别, 种族: cap.种族, 职业: cap.职业,
+    在场: true, 当前位置: '炼金祭坛', 状态: '空闲',
+    好感度: Math.floor((cap.服从度 ?? 5) * 0.5), 态度: '忠诚',
+    等级: newLv, 生命值: newHp, 生命上限: newHp, 攻击力: newAtk, 防御力: newDef,
+    类型: mob.类型 ?? '战斗',
+    技能: [], 装备: [],
+    魔物化: true, 融合次数: 次数 + 1,
+    融合特征: '', 融合种族: 融合种族, 融合能力: [],
+    外貌: cap.外貌 ?? '',
+    备注: `原俘获者，融合了${mobName}(${mob.档位 ?? '普通'})`,
+  });
+
+  delete (store.data.俘获者 as any)[captiveName];
+  delete floor.驻守魔物[mobName];
+
+  return {
+    成功: true,
+    描述: `${captiveName}与${mobName}融合！成为部下(Lv${newLv} HP${newHp}/ATK${newAtk}/DEF${newDef} 好感${Math.floor((cap.服从度 ?? 5) * 0.5)})`,
+    额外: `[AI需生成融合形态：1.用replace修改/NPC/${captiveName}/外貌，描写融合后的新外貌（参考世界书融合炼金中${mob.档位 ?? '普通'}档${mob.类型 ?? '战斗'}型魔物的特征表）2.用replace修改/NPC/${captiveName}/融合特征，总结外貌变化（如"猫耳、猫尾、竖瞳"）3.用replace修改/NPC/${captiveName}/融合能力，列出继承的特殊能力 4.用replace修改/NPC/${captiveName}/技能，设置2-3个战斗技能。不要重复insert或remove]`,
+  };
+}
+
+function exec融合NPC(npcName: string, npc: any, floorName: string, mobName: string): BuildResult {
+  if (!store.data.NPC[npcName]) return { 成功: false, 描述: '部下不存在' };
+  const floor = store.data.地下城.楼层[floorName];
+  if (!floor) return { 成功: false, 描述: '楼层不存在' };
+  const mob = floor.驻守魔物[mobName];
+  if (!mob) return { 成功: false, 描述: '魔物不存在' };
+  if ((npc.融合次数 ?? 0) >= 3) return { 成功: false, 描述: '已达融合上限(3次)' };
+  if (!checkResource(15, 3, 0)) return { 成功: false, 描述: '融合资源不足(需15魔晶+3碎片)' };
+
+  deductResource(15, 3, 0);
+
+  const 次数 = npc.融合次数 ?? 0;
+  const 系数 = 融合系数表[次数] ?? 0.4;
+  const 倍率 = 档位倍率[mob.档位] ?? 1;
+
+  npc.生命上限 += Math.floor(mob.生命上限 * 系数 * 倍率);
+  npc.攻击力 += Math.floor(mob.攻击力 * 系数 * 倍率);
+  npc.防御力 += Math.floor(mob.防御力 * 系数 * 倍率);
+  npc.等级 = Math.max(npc.等级, mob.等级);
+  npc.融合次数 = 次数 + 1;
+  const 融合种族 = [...(npc.融合种族 ?? [])];
+  融合种族.push(mob.特殊能力?.split('，')[0] || mob.档位 || '未知');
+  npc.融合种族 = 融合种族;
+
+  delete floor.驻守魔物[mobName];
+
+  return {
+    成功: true,
+    描述: `${npcName}与${mobName}融合！(第${次数 + 1}次 HP+${Math.floor(mob.生命上限 * 系数 * 倍率)}/ATK+${Math.floor(mob.攻击力 * 系数 * 倍率)}/DEF+${Math.floor(mob.防御力 * 系数 * 倍率)})`,
+    额外: `[AI需更新融合形态：1.用replace修改/NPC/${npcName}/外貌，追加新融合特征描写 2.用replace修改/NPC/${npcName}/融合特征，追加新特征 3.用replace修改/NPC/${npcName}/融合能力，追加继承的新能力。不要重复insert或remove]`,
+  };
+}
+
+function executeBuild(action: 'build' | 'convert' | 'fuse', key: string, ...args: any[]) {
   const snapshot = _.cloneDeep(store.data);
   let prevInput = '';
   try { const $p = window.parent?.$ || window.$; prevInput = $p?.('#send_textarea')?.val() || ''; } catch { /* noop */ }
@@ -767,6 +898,9 @@ function executeBuild(action: 'build' | 'convert', key: string, ...args: any[]) 
     results = [buildFn()];
   } else if (action === 'convert') {
     results = [exec转化暗堕(args[0] as string, args[1] as any)];
+  } else if (action === 'fuse') {
+    const fn = args[0] as () => BuildResult;
+    results = [fn()];
   }
   const anySuccess = results.some(r => r.成功);
   const lines = results.map(r => (r.成功 ? '✅' : '❌') + r.描述 + (r.额外 ? '\n' + r.额外 : ''));
@@ -824,6 +958,18 @@ const expandedMob = ref<string | null>(null);
 function toggleMobDetail(key: string) {
   expandedMob.value = expandedMob.value === key ? null : key;
 }
+const hasAltar = computed(() => _.some(store.data.地下城.设施, f => f.类型 === '炼金祭坛'));
+const fuseTargetCaptive = ref<string | null>(null);
+const fuseTargetNPC = ref<string | null>(null);
+const allMobs = computed(() => {
+  const list: { floor: string; name: string; 档位: string; 等级: number; 生命上限: number; 攻击力: number; 防御力: number; 特殊能力: string }[] = [];
+  _.forEach(store.data.地下城.楼层, (floor, fn) => {
+    _.forEach(floor.驻守魔物, (mob, mn) => {
+      list.push({ floor: fn, name: mn, 档位: mob.档位 ?? '普通', 等级: mob.等级, 生命上限: mob.生命上限, 攻击力: mob.攻击力, 防御力: mob.防御力, 特殊能力: mob.特殊能力 ?? '无' });
+    });
+  });
+  return list;
+});
 function npcAttitudeClass(favor: number) {
   if (favor >= 81) return 'captive-tag';
   if (favor >= 61) return 'done';
@@ -858,6 +1004,7 @@ const 设施基础费用: Record<string, { 魔晶: number; 碎片: number }> = {
   祭坛: { 魔晶: 80, 碎片: 5 },
   魔素泉: { 魔晶: 40, 碎片: 0 },
   魅魔巢穴: { 魔晶: 60, 碎片: 3 },
+  炼金祭坛: { 魔晶: 50, 碎片: 8 },
 };
 
 function 设施费用(类型: string): { 魔晶: number; 碎片: number } {
@@ -932,7 +1079,7 @@ function quickScenario(场景: string) {
       if (_.isEmpty(store.data.俘获者)) {
         _.set(store.data.俘获者, '测试英雄', {
           性别: '女', 种族: '人类', 职业: '圣骑士', 等级: 5,
-          服从度: 100, 羞耻度: 80, 心理状态: '完全臣服', 当前位置: '囚室',
+          服从度: 100, 羞耻度: 80, 状态: '完全臣服', 当前位置: '囚室',
           身体状态: '项圈', 标记: ['奴隶印记', '项圈'], 外貌: '金发碧眼，浑身烙印', 备注: '',
         });
       }
@@ -982,8 +1129,8 @@ function testInjectInvader() {
   _.set(store.data.闯入者, id, {
     性别: Math.random() > 0.5 ? '男' : '女', 种族: '人类', 职业: '战士', 等级: lv,
     生命值: lv * 10, 生命上限: lv * 10, 攻击力: lv * 2, 防御力: lv,
-    意志力: lv * 5, 意志上限: lv * 5, 当前楼层: '入口大厅', 状态: '闯入中',
-    技能: ['格挡强化'], 装备: ['铁剑', '皮甲'],
+    意志力: lv * 5, 意志上限: lv * 5, 当前位置: '入口大厅', 状态: '闯入中',
+    技能: ['格挡强化'], 装备: ['铁剑', '皮甲'], 备注: '',
   });
   store.data.当前场景.正在闯入.push(id);
 }
@@ -991,16 +1138,18 @@ function testInjectCaptive() {
   const id = `测试俘获者${_.size(store.data.俘获者) + 1}`;
   _.set(store.data.俘获者, id, {
     性别: '女', 种族: '人类', 职业: '法师', 等级: 3,
-    服从度: 15, 羞耻度: 30, 心理状态: '抗拒', 当前位置: '囚室',
+    服从度: 15, 羞耻度: 30, 状态: '抗拒', 当前位置: '囚室',
     身体状态: '完好', 标记: [], 外貌: '测试用', 备注: '',
   });
 }
 function testInjectNPC() {
   const id = `测试部下${_.size(store.data.NPC) + 1}`;
   _.set(store.data.NPC, id, {
-    在场: true, 所在区域: '地下城', 当前位置: '王座之间',
+    性别: '女', 种族: '人类', 职业: '法师',
+    在场: true, 当前位置: '王座之间',
     状态: '空闲', 好感度: 50, 态度: '忠诚', 备注: '测试NPC',
     等级: 3, 生命值: 30, 生命上限: 30, 攻击力: 6, 防御力: 5, 类型: '辅助',
+    技能: [], 装备: [], 魔物化: false, 融合次数: 0, 融合特征: '', 融合种族: [], 融合能力: [], 外貌: '',
   });
 }
 function testClearAllEntities() {
@@ -1239,6 +1388,15 @@ function testClearAllEntities() {
 .captive-actions { margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--subtle-line); }
 .convert-btn { border-color: var(--captive); color: var(--captive); }
 .convert-btn:hover { border-color: var(--captive); color: #fff; background: var(--captive); }
+.fuse-btn { border-color: #9b59b6; color: #9b59b6; }
+.fuse-btn:hover { border-color: #9b59b6; color: #fff; background: #9b59b6; }
+.fuse-menu { padding: 7px; border-radius: 7px; background: rgba(155, 89, 182, 0.08); border: 1px dashed rgba(155, 89, 182, 0.3); }
+.fuse-hint { font-size: 10px; color: var(--muted); margin-bottom: 5px; }
+.fusion-info { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--subtle-line); }
+.fusion-badge { display: inline-block; padding: 2px 7px; border-radius: 5px; font-size: 10px; font-weight: 700; background: rgba(155, 89, 182, 0.15); color: #9b59b6; border: 1px solid rgba(155, 89, 182, 0.3); margin-bottom: 4px; }
+.fusion-trait-tag { border-color: #9b59b6; color: #9b59b6; background: rgba(155, 89, 182, 0.1); }
+.fusion-race-tag { border-color: #e67e22; color: #e67e22; background: rgba(230, 126, 34, 0.1); }
+.fusion-skill-tag { border-color: #f1c40f; color: #f1c40f; background: rgba(241, 196, 15, 0.1); }
 .floor-panel { border-left: 3px solid var(--accent); }
 
 .build-panel { padding: 9px; }

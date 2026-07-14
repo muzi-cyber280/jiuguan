@@ -115,11 +115,12 @@ const RawSchema = z.object({
           防御力: z.coerce.number().prefault(1),
           意志力: z.coerce.number().prefault(5),
           意志上限: z.coerce.number().prefault(5),
-          当前楼层: z.string().prefault('入口'),
+          当前位置: z.string().prefault('入口'),
           状态: z.string().prefault('闯入中'),
           逃跑次数: z.coerce.number().prefault(0),
           技能: z.array(z.string()).prefault([]),
           装备: z.array(z.string()).prefault([]),
+          备注: z.string().prefault(''),
         })
         .prefault({}),
     )
@@ -136,7 +137,7 @@ const RawSchema = z.object({
           等级: z.coerce.number().prefault(1),
           服从度: z.coerce.number().transform(v => _.clamp(v, 0, 100)).prefault(5),
           羞耻度: z.coerce.number().transform(v => _.clamp(v, 0, 100)).prefault(20),
-          心理状态: z.string().prefault('抗拒'),
+          状态: z.string().prefault('抗拒'),
           当前位置: z.string().prefault('囚室'),
           身体状态: z.string().prefault('完好'),
           标记: z.array(z.string()).prefault([]),
@@ -163,19 +164,29 @@ const RawSchema = z.object({
       z.string().describe('NPC名'),
       z
         .object({
+          性别: z.string().prefault('女'),
+          种族: z.string().prefault('人类'),
+          职业: z.string().prefault('战士'),
           在场: z.boolean().prefault(false),
-          所在区域: z.string().prefault('地下城'),
           当前位置: z.string().prefault('王座之间'),
           状态: z.string().prefault('空闲'),
           好感度: z.coerce.number().transform(v => _.clamp(v, 0, 100)).prefault(50),
           态度: z.string().prefault('忠诚'),
-          备注: z.string().prefault(''),
           等级: z.coerce.number().transform(v => Math.max(1, Math.min(20, v))).prefault(1),
           生命值: z.coerce.number().prefault(30),
           生命上限: z.coerce.number().prefault(30),
           攻击力: z.coerce.number().prefault(5),
           防御力: z.coerce.number().prefault(3),
           类型: z.string().prefault('辅助'),
+          技能: z.array(z.string()).prefault([]),
+          装备: z.array(z.string()).prefault([]),
+          魔物化: z.boolean().prefault(false),
+          融合次数: z.coerce.number().transform(v => _.clamp(v, 0, 3)).prefault(0),
+          融合特征: z.string().prefault(''),
+          融合种族: z.array(z.string()).prefault([]),
+          融合能力: z.array(z.string()).prefault([]),
+          外貌: z.string().prefault(''),
+          备注: z.string().prefault(''),
         })
         .prefault({}),
     )
@@ -256,14 +267,47 @@ export const Schema = z.preprocess((data) => {
     if (d?.闯入者) {
       let needFixInv = false;
       _.forEach(d.闯入者, (inv: any) => {
-        if (inv?.当前楼层 === '第一层·回廊') needFixInv = true;
+        const cur = inv?.当前位置 ?? inv?.当前楼层;
+        if (inv?.当前楼层 !== undefined) needFixInv = true;
+        if (cur === '第一层·回廊') needFixInv = true;
       });
       if (needFixInv) {
         clone();
         _.forEach(d.闯入者, (inv: any) => {
-          if (inv?.当前楼层 === '第一层·回廊') inv.当前楼层 = '第一层';
+          if (inv?.当前楼层 !== undefined) {
+            inv.当前位置 = inv.当前楼层;
+            delete inv.当前楼层;
+          }
+          if (inv?.当前位置 === '第一层·回廊') inv.当前位置 = '第一层';
         });
       }
+    }
+  }
+  if (d?.俘获者) {
+    let needFixCap = false;
+    _.forEach(d.俘获者, (cap: any) => {
+      if (cap?.心理状态 !== undefined) needFixCap = true;
+    });
+    if (needFixCap) {
+      clone();
+      _.forEach(d.俘获者, (cap: any) => {
+        if (cap?.心理状态 !== undefined) {
+          cap.状态 = cap.心理状态;
+          delete cap.心理状态;
+        }
+      });
+    }
+  }
+  if (d?.NPC) {
+    let needFixNpc = false;
+    _.forEach(d.NPC, (npc: any) => {
+      if (npc?.所在区域 !== undefined) needFixNpc = true;
+    });
+    if (needFixNpc) {
+      clone();
+      _.forEach(d.NPC, (npc: any) => {
+        if (npc?.所在区域 !== undefined) delete npc.所在区域;
+      });
     }
   }
   return d;
