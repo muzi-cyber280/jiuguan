@@ -7,7 +7,7 @@
           <strong>{{ store.data.地下城.城主.名号 }}</strong>
           <small>第{{ worldDay }}日 {{ timeString }} · 声望 {{ '★'.repeat(Math.floor(store.data.地下城.声望)) }}{{ '☆'.repeat(10 - Math.floor(store.data.地下城.声望)) }}</small>
         </span>
-        <span v-if="!collapsed" class="version-badge">V0714g</span>
+        <span v-if="!collapsed" class="version-badge">V0714h</span>
       </div>
       <div class="top-actions">
         <template v-if="collapsed">
@@ -236,6 +236,7 @@
             <span v-else class="status-tag absent-tag">离场</span>
             <span class="status-tag" :class="npcAttitudeClass(npc.好感度)">{{ npc.态度 }}</span>
           </div>
+          <p class="desc muted-desc">{{ npc.性别 }} · {{ npc.种族 }} · {{ npc.职业 }} · {{ npc.类型 }}</p>
           <div class="bar-shell"><div class="bar-fill favor" :style="{ width: npc.好感度 + '%' }"></div><span>好感 {{ npc.好感度 }}</span></div>
           <div class="bar-shell"><div class="bar-fill hp" :style="{ width: npcHpPct(npc) + '%' }"></div><span>HP {{ npc.生命值 }} / {{ npc.生命上限 }}</span></div>
           <div class="stat-row">
@@ -259,14 +260,14 @@
               <span class="tag-label">能力</span>
               <span v-for="(a, ai) in npc.融合能力" :key="ai" class="tag fusion-skill-tag">{{ a }}</span>
             </div>
-            <div v-if="npc.技能 && npc.技能.length > 0" class="tag-section">
-              <span class="tag-label">技能</span>
-              <span v-for="(s, si) in npc.技能" :key="si" class="tag inv-skill-tag">{{ s }}</span>
-            </div>
-            <div v-if="npc.装备 && npc.装备.length > 0" class="tag-section">
-              <span class="tag-label">装备</span>
-              <span v-for="(g, gi) in npc.装备" :key="gi" class="tag inv-gear-tag">{{ g }}</span>
-            </div>
+          </div>
+          <div v-if="npc.技能 && npc.技能.length > 0" class="tag-section">
+            <span class="tag-label">技能</span>
+            <span v-for="(s, si) in npc.技能" :key="si" class="tag inv-skill-tag">{{ s }}</span>
+          </div>
+          <div v-if="npc.装备 && npc.装备.length > 0" class="tag-section">
+            <span class="tag-label">装备</span>
+            <span v-for="(g, gi) in npc.装备" :key="gi" class="tag inv-gear-tag">{{ g }}</span>
           </div>
           <p v-if="npc.外貌" class="desc">{{ npc.外貌 }}</p>
           <div class="floor-actions">
@@ -311,7 +312,8 @@
               <span v-for="(gear, gi) in inv.装备" :key="gi" class="tag inv-gear-tag">{{ gear }}</span>
             </div>
           </template>
-          <p v-else class="desc muted-desc">已逃离地下城，可能卷土重来并变得更强</p>
+          <p v-if="inv.状态 === '撤退'" class="desc muted-desc">已逃离地下城，可能卷土重来并变得更强</p>
+          <p v-if="inv.备注" class="desc muted-desc">{{ inv.备注 }}</p>
         </div>
       </section>
 
@@ -335,6 +337,7 @@
             <span v-for="mark in cap.标记" :key="mark" class="tag mark-tag">{{ mark }}</span>
           </div>
           <p v-if="cap.外貌" class="desc">{{ cap.外貌 }}</p>
+          <p v-if="cap.备注" class="desc muted-desc">{{ cap.备注 }}</p>
           <div v-if="cap.服从度 >= 100" class="captive-actions">
             <button class="build-btn sm convert-btn" type="button" @click="executeBuild('convert', '转化暗堕:' + name, name, cap)">转化为暗堕随从</button>
             <button v-if="lastUndo?.key === '转化暗堕:' + name" class="undo-btn sm" type="button" @click="performUndo">撤销</button>
